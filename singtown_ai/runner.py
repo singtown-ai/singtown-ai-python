@@ -36,9 +36,9 @@ class Task(BaseModel):
     status: TaskStatus
     crated_at: str
     cwd: str
-    dataset_path: str
-    metrics_path: str
-    result_path: str
+    metrics_path: str | None
+    resource_extract: str
+    output_file: str
     cmd: List[str]
 
 
@@ -116,20 +116,22 @@ class Runner:
     def save(self, result_file: str):
         self.__upload(f"/tasks/{self.task.id}/result", result_file)
 
-    def download_dataset(self, folder: str):
-        self.log("downloading dataset\n")
+    def download_resource(self, extract: str):
+        self.log("downloading resource\n")
         filename = None
-        os.makedirs(folder, exist_ok=True)
-        response = self.__request("GET", f"/tasks/{self.task.id}/dataset")
+        os.makedirs(extract, exist_ok=True)
+        response = self.__request("GET", f"/tasks/{self.task.id}/resource")
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(response.content)
             filename = f.name
         with zipfile.ZipFile(filename, "r") as zip_ref:
-            zip_ref.extractall(folder)
+            zip_ref.extractall(extract)
         os.remove(filename)
         self.log("download success\n")
 
-    def watch(self, args: List[str], cwd: str, metrics_file: str, result_file: str):
+    def watch(
+        self, args: List[str], cwd: str, metrics_file: str | None, output_file: str
+    ):
         process = subprocess.Popen(
             args,
             stdout=subprocess.PIPE,
@@ -144,7 +146,7 @@ class Runner:
             now = time.time()
             if now - last_time > 3:
                 self.log(stdout)
-                if metrics_file.endswith(".csv"):
+                if metrics_file and metrics_file.endswith(".csv"):
                     metrics = read_csv(os.path.join(cwd, metrics_file))
                     self.metrics(metrics)
                 stdout = ""
@@ -152,7 +154,7 @@ class Runner:
 
         code = process.wait()
         if code == 0:
-            self.save(os.path.join(cwd, result_file))
+            self.save(os.path.join(cwd, output_file))
             self.succees()
         else:
             for line in process.stderr:
@@ -170,5 +172,5 @@ if __name__ == "__main__":
     run = Runner(args.host, args.task, args.token)
     task = run.task
 
-    run.download_dataset(task.dataset_path)
-    run.watch(task.cmd, task.cwd, task.metrics_path, task.result_path)
+    run.download_resource(task.resource_extract)
+    run.watch(task.cmd, task.cwd, task.metrics_path, task.output_file)
