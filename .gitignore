@@ -6,3 +6,5 @@ dist
 build
 *.egg-info
 singtown_ai/metrics.csv
+dataset
+.vscode
