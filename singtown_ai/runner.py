@@ -98,11 +98,14 @@ class Runner:
     def running(self):
         self.__update_task({"status": TaskStatus.running})
 
-    def metrics(self, metrics: List[str]):
-        self.__update_task({"metrics": metrics})
+    def metrics(self):
+        if self.metrics_file and self.metrics_file.endswith(".csv"):
+            metrics = self.__read_csv(os.path.join(self.cwd, self.metrics_file))
+            self.__update_task({"metrics": metrics})
 
     def log(self, log: str):
-        self.__update_task({"log": log})
+        now = time.time()
+        self.__update_task({"log": { "timestamp": now, "content": log }})
 
     def upload(self, result_file: str):
         self.__upload(f"/api/v1/task/tasks/{self.task.id}/result", result_file)
@@ -137,13 +140,12 @@ class Runner:
             now = time.time()
             if now - last_time > 3:
                 self.log(stdout)
-                if self.metrics_file and self.metrics_file.endswith(".csv"):
-                    metrics = self.__read_csv(os.path.join(self.cwd, self.metrics_file))
-                    self.metrics(metrics)
+                self.metrics()
                 stdout = ""
                 last_time = now
 
         code = process.wait()
+        self.metrics()
         
         if code == 0:
             self.upload(os.path.join(self.cwd, self.output_file))
