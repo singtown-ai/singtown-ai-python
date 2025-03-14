@@ -33,7 +33,7 @@ class TaskResponse(BaseModel):
 
 
 class Runner:
-    def __init__(self, host: str, task_id: UUID, token: str, config="singtown-ai.json"):
+    def __init__(self, host: str, task_id: UUID, token: str, config: str):
         with open(config, "r") as f:
             self.config = Config(**json.load(f))
 
@@ -170,9 +170,10 @@ if __name__ == "__main__":
     parser.add_argument("--host", type=str, help="host", required=True)
     parser.add_argument("--task", type=str, help="task id", required=True)
     parser.add_argument("--token", type=str, help="task token", required=True)
+    parser.add_argument("--config", type=str, help="config json", required=True)
     args = parser.parse_args()
 
-    run = Runner(args.host, args.task, args.token)
+    run = Runner(args.host, args.task, args.token, args.config)
     task = run.task
 
     run.download_resource()
