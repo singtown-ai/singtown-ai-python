@@ -11,6 +11,14 @@ import subprocess
 import tempfile
 import zipfile
 import argparse
+import shutil
+
+
+class Config(BaseModel):
+    resource_path: str
+    metrics_path: str
+    result_path: str
+
 
 class TaskStatus(str, Enum):
     pending = "PENDING"
@@ -21,21 +29,22 @@ class TaskStatus(str, Enum):
 
 class TaskResponse(BaseModel):
     id: int
-    status: TaskStatus
-    created: str
-    name: str
-    epochs: int
     cmd: List[str]
 
 
 class Runner:
-    def __init__(self, host: str, task_id: UUID, token: str, cwd: str, metrics_file, output_file, dataset_dir):
+    def __init__(self, host: str, task_id: UUID, token: str, config="singtown-ai.json"):
+        with open(config, "r") as f:
+            self.config = Config(**json.load(f))
+
+        shutil.rmtree(self.config.resource_path, ignore_errors=True)
+        shutil.rmtree(self.config.metrics_path, ignore_errors=True)
+        shutil.rmtree(self.config.result_path, ignore_errors=True)
+        os.makedirs(self.config.resource_path)
+
+
         self.host = host
         self.headers = {"Authorization": f"Bearer {token}"}
-        self.cwd = cwd
-        self.metrics_file = metrics_file
-        self.output_file = output_file
-        self.dataset_dir = dataset_dir
 
         response = self.__request("GET", f"/api/v1/task/tasks/{task_id}")
         self.task = TaskResponse(**response.json())
@@ -99,39 +108,35 @@ class Runner:
         self.__update_task({"status": TaskStatus.running})
 
     def metrics(self):
-        if self.metrics_file and self.metrics_file.endswith(".csv"):
-            metrics = self.__read_csv(os.path.join(self.cwd, self.metrics_file))
+        if self.config.metrics_path and self.config.metrics_path.endswith(".csv"):
+            metrics = self.__read_csv(self.config.metrics_path)
             self.__update_task({"metrics": metrics})
 
     def log(self, log: str):
         now = time.time()
         self.__update_task({"log": { "timestamp": now, "content": log }})
 
-    def upload(self, result_file: str):
-        self.__upload(f"/api/v1/task/tasks/{self.task.id}/result", result_file)
+    def upload(self):
+        self.__upload(f"/api/v1/task/tasks/{self.task.id}/result", self.config.result_path)
 
     def download_resource(self):
         self.log("downloading resource\n")
-        filename = None
-        os.makedirs(self.dataset_dir, exist_ok=True)
         response = self.__request("GET", f"/api/v1/task/tasks/{self.task.id}/pack")
+        filename = None
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(response.content)
             filename = f.name
         with zipfile.ZipFile(filename, "r") as zip_ref:
-            zip_ref.extractall(self.dataset_dir)
+            zip_ref.extractall(self.config.resource_path)
         os.remove(filename)
         self.log("download success\n")
 
-    def watch(
-        self, args: List[str]
-    ):
+    def watch(self):
         process = subprocess.Popen(
-            args,
+            self.task.cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            cwd=self.cwd,
         )
         stdout = ""
         last_time = time.time()
@@ -145,10 +150,11 @@ class Runner:
                 last_time = now
 
         code = process.wait()
+        self.log(stdout)
         self.metrics()
         
         if code == 0:
-            self.upload(os.path.join(self.cwd, self.output_file))
+            self.upload()
             self.success()
         else:
             for line in process.stderr:
@@ -164,14 +170,10 @@ if __name__ == "__main__":
     parser.add_argument("--host", type=str, help="host", required=True)
     parser.add_argument("--task", type=str, help="task id", required=True)
     parser.add_argument("--token", type=str, help="task token", required=True)
-    parser.add_argument("--cwd", type=str, help="current working directory", default="./", required=False)
-    parser.add_argument("--metrics_file", type=str, help="metrics file", default="metrics.csv", required=False)
-    parser.add_argument("--output_file", type=str, help="output file", default="output.zip", required=False)
-    parser.add_argument("--dataset_dir", type=str, help="dataset directory", default="dataset", required=False)
     args = parser.parse_args()
 
-    run = Runner(args.host, args.task, args.token, args.cwd, args.metrics_file, args.output_file, args.dataset_dir)
+    run = Runner(args.host, args.task, args.token)
     task = run.task
 
     run.download_resource()
-    run.watch(task.cmd)
+    run.watch()
