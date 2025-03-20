@@ -13,6 +13,7 @@ import zipfile
 import argparse
 import shutil
 
+MOCK_SERVER = "MOCK"
 
 class Config(BaseModel):
     resource_path: str
@@ -37,17 +38,17 @@ class Runner:
         with open(config, "r") as f:
             self.config = Config(**json.load(f))
 
-        shutil.rmtree(self.config.resource_path, ignore_errors=True)
-        shutil.rmtree(self.config.metrics_path, ignore_errors=True)
-        shutil.rmtree(self.config.result_path, ignore_errors=True)
-        os.makedirs(self.config.resource_path)
-
-
         self.host = host
         self.headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.__request("GET", f"/api/v1/task/tasks/{task_id}")
-        self.task = TaskResponse(**response.json())
+        shutil.rmtree(self.config.metrics_path, ignore_errors=True)
+        shutil.rmtree(self.config.result_path, ignore_errors=True)
+
+        if self.host == MOCK_SERVER:
+            self.task = TaskResponse(**json.load(open(task_id)))
+        else:
+            response = self.__request("GET", f"/api/v1/task/tasks/{task_id}")
+            self.task = TaskResponse(**response.json())
         self.running()
 
     def __request(self, method: str, url: str, json: dict | None = None):
@@ -71,6 +72,9 @@ class Runner:
             return response
 
     def __upload(self, url: str, file_path: str):
+        print("upload", file_path)
+        if self.host == MOCK_SERVER:
+            return
         with open(file_path, "rb") as f:
             response = requests.post(
                 f"{self.host}{url}",
@@ -81,10 +85,11 @@ class Runner:
             raise RuntimeError(
                 f"Upload {file_path} to {response.url} Error: {response.status_code}"
             )
-        else:
-            return response
 
     def __update_task(self, json: dict):
+        print("update_task", json)
+        if self.host == MOCK_SERVER:
+            return
         self.__request(
             "POST",
             f"/api/v1/task/tasks/{self.task.id}",
@@ -120,6 +125,11 @@ class Runner:
         self.__upload(f"/api/v1/task/tasks/{self.task.id}/result", self.config.result_path)
 
     def download_resource(self):
+        print("download resource")
+        if self.host == MOCK_SERVER:
+            return
+        shutil.rmtree(self.config.resource_path, ignore_errors=True)
+        os.makedirs(self.config.resource_path)
         self.log("downloading resource\n")
         response = self.__request("GET", f"/api/v1/task/tasks/{self.task.id}/pack")
         filename = None
@@ -167,10 +177,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SingTown AI Runner")
 
     parser.add_argument("--version", action="version", version="0.0.1")
-    parser.add_argument("--host", type=str, help="host", required=True)
+    parser.add_argument("--host", type=str, help="host", default=MOCK_SERVER)
     parser.add_argument("--task", type=str, help="task id", required=True)
-    parser.add_argument("--token", type=str, help="task token", required=True)
-    parser.add_argument("--config", type=str, help="config json", required=True)
+    parser.add_argument("--token", type=str, help="task token", default="")
+    parser.add_argument("--config", type=str, default="singtown-ai.json", help="config json")
     args = parser.parse_args()
 
     run = Runner(args.host, args.task, args.token, args.config)
