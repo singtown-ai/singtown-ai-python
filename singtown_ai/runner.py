@@ -41,9 +41,6 @@ class Runner:
         self.host = host
         self.headers = {"Authorization": f"Bearer {token}"}
 
-        shutil.rmtree(self.config.metrics_path, ignore_errors=True)
-        shutil.rmtree(self.config.result_path, ignore_errors=True)
-
         if self.host == MOCK_SERVER:
             self.task = TaskResponse(**json.load(open(task_id)))
         else:
@@ -142,6 +139,9 @@ class Runner:
         self.log("download success\n")
 
     def watch(self):
+        shutil.rmtree(self.config.metrics_path, ignore_errors=True)
+        shutil.rmtree(self.config.result_path, ignore_errors=True)
+
         process = subprocess.Popen(
             self.task.cmd,
             stdout=subprocess.PIPE,
@@ -184,7 +184,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     run = Runner(args.host, args.task, args.token, args.config)
-    task = run.task
-
-    run.download_resource()
-    run.watch()
+    try:
+        run.download_resource()
+        run.watch()
+    except Exception as error:
+        run.failed()
+        raise error
