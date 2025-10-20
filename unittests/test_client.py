@@ -10,10 +10,10 @@ TASK_IDS = ["0", "1", "2"]
 @pytest.mark.parametrize("task_id", TASK_IDS)
 def test_status(task_id):
     client = SingTownAIClient(task_id=task_id, mock=True)
-    assert client.task.status.value == "PENDING"
+    assert client.task.status == "PENDING"
     with client:
-        assert client.task.status.value == "RUNNING"
-    assert client.task.status.value == "SUCCESS"
+        assert client.task.status == "RUNNING"
+    assert client.task.status == "SUCCESS"
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)
@@ -37,7 +37,7 @@ def test_exception(task_id):
     with pytest.raises(RuntimeError):
         with client:
             raise RuntimeError("test exception")
-    assert client.task.status.value == "FAILED"
+    assert client.task.status == "FAILED"
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)
@@ -173,20 +173,20 @@ def test_logs_long_time(task_id):
 @pytest.mark.parametrize("task_id", TASK_IDS)
 def test_subprocess_status(task_id):
     client = SingTownAIClient(task_id=task_id, mock=True)
-    assert client.task.status.value == "PENDING"
+    assert client.task.status == "PENDING"
     with client:
         client.run_subprocess("echo Hello, World!")
-    assert client.task.status.value == "SUCCESS"
+    assert client.task.status == "SUCCESS"
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)
 def test_subprocess_error(task_id):
     client = SingTownAIClient(task_id=task_id, mock=True)
-    assert client.task.status.value == "PENDING"
+    assert client.task.status == "PENDING"
     with pytest.raises(RuntimeError):
         with client:
             client.run_subprocess("invalid_command")
-    assert client.task.status.value == "FAILED"
+    assert client.task.status == "FAILED"
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)

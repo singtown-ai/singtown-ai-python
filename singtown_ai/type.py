@@ -1,29 +1,11 @@
 from pydantic import BaseModel
-from typing import List
-from enum import Enum
+from typing import List, Literal
 
 
-class TaskStatus(str, Enum):
-    pending = "PENDING"
-    running = "RUNNING"
-    success = "SUCCESS"
-    failed = "FAILED"
-
-
-class ProjectType(str, Enum):
-    classification = "CLASSIFICATION"
-    object_detection = "OBJECT_DETECTION"
-
-
-class TaskType(str, Enum):
-    train = "TRAIN"
-    deploy = "DEPLOY"
-
-
-class DatasetSubset(str, Enum):
-    train = "train"
-    val = "val"
-    test = "test"
+TaskStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"]
+ProjectType = Literal["CLASSIFICATION", "OBJECT_DETECTION"]
+TaskType = Literal["TRAIN", "DEPLOY"]
+DatasetSubset = Literal["train", "val", "test"]
 
 
 class ObjectDetectionEntry(BaseModel):

@@ -125,6 +125,9 @@ class SingTownAIClient:
         self.task = TaskResponse(**new_task)
         self.__request("POST", f"/api/v1/task/tasks/{self.task_id}", json)
 
+    def __update_status(self, status: TaskStatus):
+        self.__post_task({"status": status})
+
     def get_dataset(self) -> List[Annotation]:
         response = self.__request("GET", f"/api/v1/task/tasks/{self.task_id}/dataset")
         return [Annotation(**item) for item in response.json()]
@@ -204,7 +207,7 @@ class SingTownAIClient:
             raise RuntimeError(f"subprocess {cmd} failed")
 
     def __enter__(self):
-        self.__post_task({"status": TaskStatus.running})
+        self.__update_status("RUNNING")
         self.__watch_log()
         return self
 
@@ -215,7 +218,7 @@ class SingTownAIClient:
 
         self.__loop_once()
         if exc_type is None:
-            self.__post_task({"status": TaskStatus.success})
+            self.__update_status("SUCCESS")
         else:
             self.log(f"Exception: {exc_value}")
-            self.__post_task({"status": TaskStatus.failed})
+            self.__update_status("FAILED")
