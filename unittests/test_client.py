@@ -18,17 +18,13 @@ def test_status(task_id):
 
 @pytest.mark.parametrize("task_id", TASK_IDS)
 def test_server_error(task_id):
+    from requests.exceptions import HTTPError
+
     with requests_mock.Mocker() as m:
         m.register_uri(requests_mock.ANY, requests_mock.ANY, status_code=500)
-        with pytest.raises(RuntimeError):
+        with pytest.raises(HTTPError):
             with SingTownAIClient(task_id=task_id, mock=False):
                 pass
-
-
-def test_reuest_post():
-    with pytest.raises(RuntimeError):
-        with SingTownAIClient(task_id="0", mock=True) as client:
-            client._SingTownAIClient__request("PUT", "")
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)

@@ -1,96 +1,108 @@
 from .type import Annotation, TaskResponse
-from pathlib import Path
-
-dataset_dir = Path(__file__).parent.joinpath("dataset").absolute()
 
 MOCK_DATASET_CF = [
     {
-        "file": dataset_dir.joinpath("cat.0.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.0.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.1.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.1.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.2.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.2.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.3.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.3.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.4.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.4.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.5.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.5.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.6.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.6.jpg",
         "subset": "TRAIN",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.7.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.6.jpg",
+        "subset": "TRAIN",
+        "classification": "cat",
+    },
+    {
+        "url": "https://ai.singtown.com/media/cat.7.jpg",
         "subset": "VALID",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.8.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.8.jpg",
         "subset": "VALID",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("cat.9.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.9.jpg",
         "subset": "TEST",
         "classification": "cat",
     },
     {
-        "file": dataset_dir.joinpath("dog.0.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.0.jpg",
         "subset": "TRAIN",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.1.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.1.jpg",
         "subset": "TRAIN",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.2.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.2.jpg",
         "subset": "TRAIN",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.3.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.3.jpg",
         "subset": "TRAIN",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.4.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.4.jpg",
         "subset": "TRAIN",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.5.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.5.jpg",
+        "subset": "TRAIN",
+        "classification": "dog",
+    },
+    {
+        "url": "https://ai.singtown.com/media/dog.6.jpg",
+        "subset": "TRAIN",
+        "classification": "dog",
+    },
+    {
+        "url": "https://ai.singtown.com/media/dog.7.jpg",
         "subset": "VALID",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.6.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.8.jpg",
         "subset": "VALID",
         "classification": "dog",
     },
     {
-        "file": dataset_dir.joinpath("dog.7.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.9.jpg",
         "subset": "TEST",
         "classification": "dog",
     },
@@ -98,140 +110,140 @@ MOCK_DATASET_CF = [
 
 MOCK_DATASET_OD = [
     {
-        "file": dataset_dir.joinpath("cat.0.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.0.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.1.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.1.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.2.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.2.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.3.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.3.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.4.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.4.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.5.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.4.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.6.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.6.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.7.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.7.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.8.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.8.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("cat.9.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/cat.9.jpg",
         "subset": "TEST",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.0.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.0.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.1.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.1.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.2.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.2.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.3.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.3.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.4.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.4.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.5.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.5.jpg",
         "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.6.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.6.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.7.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.7.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.8.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.8.jpg",
         "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
-        "file": dataset_dir.joinpath("dog.9.jpg").as_posix(),
+        "url": "https://ai.singtown.com/media/dog.9.jpg",
         "subset": "TEST",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
@@ -280,7 +292,7 @@ MOCK_TASK_MAP = {
         },
         type="DEPLOY",
         status="PENDING",
-        trained_file="https://example.com/trained_model.zip",
+        trained_file="https://ai.singtown.com/media/trained_model.zip",
         params={
             "imgw": 96,
             "imgh": 96,

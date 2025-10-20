@@ -14,7 +14,7 @@ class ObjectDetectionEntry(BaseModel):
 
 
 class Annotation(BaseModel):
-    file: str
+    url: str
     subset: DatasetSubset
     classification: str = ""
     object_detection: List[ObjectDetectionEntry] = []

@@ -1,7 +1,6 @@
 import os
 import io
 import subprocess
-import requests
 import threading
 import csv
 import time
@@ -41,7 +40,7 @@ class SingTownAIClient:
         if mock:
             self.__setup_mock()
 
-        self.task = self.__get_task(self.task_id)
+        self.task = self.__get_task()
 
     def __setup_mock(self):
         for task_id in MOCK_TASK_MAP.keys():
@@ -76,69 +75,54 @@ class SingTownAIClient:
                     annotation.model_dump() for annotation in MOCK_DATASET_MAP[task_id]
                 ],
             )
+        mock_dataset_dir = Path(__file__).parent.joinpath("dataset")
+        for file in mock_dataset_dir.glob("*"):
+            self.mocker.get(
+                f"https://ai.singtown.com/media/{file.name}",
+                content=file.read_bytes(),
+            )
 
-    def __request(
-        self,
-        method: str,
-        url: str,
-        host: str = None,
-        data=None,
-        json=None,
-        files=None,
-    ):
+    def request(self, method, url, **kwargs):
+        import requests
+
         with self._request_lock:
-            if host is None:
-                host = self.host
             with self.mocker:
-                if method == "GET":
-                    response = requests.get(
-                        f"{host}{url}",
-                        data=data,
-                        json=json,
-                        files=files,
-                        headers=self.headers,
-                    )
-                elif method == "POST":
-                    response = requests.post(
-                        f"{self.host}{url}",
-                        data=data,
-                        json=json,
-                        files=files,
-                        headers=self.headers,
-                    )
-                else:
-                    raise RuntimeError(f"request method not support {method}")
-                if not response.ok:
-                    raise RuntimeError(
-                        f"request {response.url} error! {response.status_code}"
-                    )
-                else:
-                    return response
+                response = requests.request(method, url, **kwargs, headers=self.headers)
+                response.raise_for_status()
+                return response
 
-    def __get_task(self, task_id: str) -> TaskResponse:
-        response = self.__request("GET", f"/api/v1/task/tasks/{task_id}")
+    def get(self, url, params=None, **kwargs):
+        return self.request("GET", url, params=params, **kwargs)
+
+    def post(self, url, data=None, json=None, **kwargs):
+        return self.request("POST", url, data=data, json=json, **kwargs)
+
+    def __get_task(self) -> TaskResponse:
+        response = self.get(f"{self.host}/api/v1/task/tasks/{self.task_id}")
+        response.raise_for_status()
         return TaskResponse(**response.json())
 
     def __post_task(self, json: dict):
         new_task = self.task.model_dump()
         new_task.update(json)
         self.task = TaskResponse(**new_task)
-        self.__request("POST", f"/api/v1/task/tasks/{self.task_id}", json)
+        response = self.post(f"{self.host}/api/v1/task/tasks/{self.task_id}", json=json)
+        response.raise_for_status()
 
     def __update_status(self, status: TaskStatus):
         self.__post_task({"status": status})
 
     def get_dataset(self) -> List[Annotation]:
-        response = self.__request("GET", f"/api/v1/task/tasks/{self.task_id}/dataset")
+        response = self.get(f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset")
+        response.raise_for_status()
         return [Annotation(**item) for item in response.json()]
 
     def __post_log(self, content: str):
         log = LogEntry(timestamp=time.time(), content=content)
-        self.__request(
-            "POST",
-            f"/api/v1/task/tasks/{self.task_id}/logs",
-            json=log.model_dump(),
+        response = self.post(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}/logs", json=log.model_dump()
         )
+        response.raise_for_status()
         self.logs.append(log)
 
     def upload_metrics(self, metrics: List[dict]):
@@ -146,9 +130,11 @@ class SingTownAIClient:
 
     def upload_results_zip(self, file_path: str | PathLike):
         with open(file_path, "rb") as f:
-            self.__request(
-                "POST", f"/api/v1/task/tasks/{self.task_id}/result", files={"file": f}
+            response = self.post(
+                f"{self.host}/api/v1/task/tasks/{self.task_id}/result",
+                files={"file": f},
             )
+            response.raise_for_status()
 
     def download_trained_file(self, model_path: str | PathLike):
         trained_file = self.task.trained_file
@@ -156,7 +142,7 @@ class SingTownAIClient:
             return
         shutil.rmtree(model_path, ignore_errors=True)
         os.makedirs(model_path)
-        response = self.__request("GET", trained_file, host="")
+        response = self.get(trained_file)
         filename = None
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(response.content)
