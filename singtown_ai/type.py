@@ -5,7 +5,7 @@ from typing import List, Literal
 TaskStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"]
 ProjectType = Literal["CLASSIFICATION", "OBJECT_DETECTION"]
 TaskType = Literal["TRAIN", "DEPLOY"]
-DatasetSubset = Literal["train", "val", "test"]
+DatasetSubset = Literal["TRAIN", "VALID", "TEST"]
 
 
 class ObjectDetectionEntry(BaseModel):

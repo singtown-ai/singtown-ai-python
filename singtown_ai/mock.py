@@ -6,92 +6,92 @@ dataset_dir = Path(__file__).parent.joinpath("dataset").absolute()
 MOCK_DATASET_CF = [
     {
         "file": dataset_dir.joinpath("cat.0.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.1.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.2.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.3.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.4.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.5.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.6.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.7.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.8.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("cat.9.jpg").as_posix(),
-        "subset": "test",
+        "subset": "TEST",
         "classification": "cat",
     },
     {
         "file": dataset_dir.joinpath("dog.0.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.1.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.2.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.3.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.4.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.5.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.6.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "classification": "dog",
     },
     {
         "file": dataset_dir.joinpath("dog.7.jpg").as_posix(),
-        "subset": "test",
+        "subset": "TEST",
         "classification": "dog",
     },
 ]
@@ -99,140 +99,140 @@ MOCK_DATASET_CF = [
 MOCK_DATASET_OD = [
     {
         "file": dataset_dir.joinpath("cat.0.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.1.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.2.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.3.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.4.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.5.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.6.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.7.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.8.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("cat.9.jpg").as_posix(),
-        "subset": "test",
+        "subset": "TEST",
         "object_detection": [
             {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.0.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.1.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.2.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.3.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.4.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.5.jpg").as_posix(),
-        "subset": "train",
+        "subset": "TRAIN",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.6.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.7.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.8.jpg").as_posix(),
-        "subset": "val",
+        "subset": "VALID",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
     },
     {
         "file": dataset_dir.joinpath("dog.9.jpg").as_posix(),
-        "subset": "test",
+        "subset": "TEST",
         "object_detection": [
             {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
         ],
