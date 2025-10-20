@@ -35,11 +35,6 @@ MOCK_DATASET_CF = [
         "classification": "cat",
     },
     {
-        "url": "https://ai.singtown.com/media/cat.6.jpg",
-        "subset": "TRAIN",
-        "classification": "cat",
-    },
-    {
         "url": "https://ai.singtown.com/media/cat.7.jpg",
         "subset": "VALID",
         "classification": "cat",
@@ -111,140 +106,140 @@ MOCK_DATASET_OD = [
         "url": "https://ai.singtown.com/media/cat.0.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.1.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.2.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.3.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.4.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
-        "url": "https://ai.singtown.com/media/cat.4.jpg",
+        "url": "https://ai.singtown.com/media/cat.5.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.6.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.7.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.8.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/cat.9.jpg",
         "subset": "TEST",
         "object_detection": [
-            {"label": "cat", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.0.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.1.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.2.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.3.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.4.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.5.jpg",
         "subset": "TRAIN",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.6.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.7.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.8.jpg",
         "subset": "VALID",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
     {
         "url": "https://ai.singtown.com/media/dog.9.jpg",
         "subset": "TEST",
         "object_detection": [
-            {"label": "dog", "bbox": [0, 0, 0.3, 0.4]},
+            {"label": "dog", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
         ],
     },
 ]

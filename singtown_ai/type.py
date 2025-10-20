@@ -8,16 +8,19 @@ TaskType = Literal["TRAIN", "DEPLOY"]
 DatasetSubset = Literal["TRAIN", "VALID", "TEST"]
 
 
-class ObjectDetectionEntry(BaseModel):
+class BoundingBox(BaseModel):
     label: str
-    bbox: List[float]
+    xmin: float
+    ymin: float
+    xmax: float
+    ymax: float
 
 
 class Annotation(BaseModel):
     url: str
     subset: DatasetSubset
     classification: str = ""
-    object_detection: List[ObjectDetectionEntry] = []
+    object_detection: List[BoundingBox] = []
 
 
 class Project(BaseModel):

@@ -57,7 +57,7 @@ def test_upload_metrics(mock_data):
 
 
 @pytest.mark.parametrize("mock_data", MOCK_DATAS)
-def test_watch_metrics(tmpdir, mock_data):
+def test_watch_metrics_strpath(tmpdir, mock_data):
     metricsfile = tmpdir.join("metrics.csv")
     with open(str(metricsfile), "w") as f:
         f.write("epoch,accuracy,loss\n")
@@ -81,9 +81,7 @@ def test_watch_metrics_not_exist(tmpdir, mock_data):
 
 @pytest.mark.parametrize("mock_data", MOCK_DATAS)
 def test_watch_metrics_pathlike(tmpdir, mock_data):
-    from pathlib import Path
-
-    metricsfile = Path(tmpdir).joinpath("metrics.csv")
+    metricsfile = tmpdir.join("metrics.csv")
     client = SingTownAIClient(metrics_file=metricsfile, mock_data=mock_data)
     with client:
         pass
@@ -98,7 +96,7 @@ def test_get_dataset(tmpdir, mock_data):
 
 
 @pytest.mark.parametrize("mock_data", MOCK_DATAS)
-def test_upload_results_zip(tmpdir, mock_data):
+def test_upload_results_zip_strpath(tmpdir, mock_data):
     uploadfile = tmpdir.join("result.zip")
     with zipfile.ZipFile(uploadfile, "w") as zf:
         zf.writestr("best.tflite", "content")
@@ -129,10 +127,10 @@ def test_upload_results_zip_pathlike(tmpdir, mock_data):
 
 
 @pytest.mark.parametrize("mock_data", [MOCK_DEPLOY_CLASSIFICATION])
-def test_download_trained_file_exist(tmpdir, mock_data):
+def test_download_trained_file_exist_strpath(tmpdir, mock_data):
     client = SingTownAIClient(mock_data=mock_data)
     with client:
-        client.download_trained_file(tmpdir)
+        client.download_trained_file(str(tmpdir))
         assert tmpdir.join("best.onnx").exists()
 
 
@@ -150,13 +148,10 @@ def test_download_trained_file_not_exist(tmpdir, mock_data):
     "mock_data", [MOCK_TRAIN_CLASSIFICATION, MOCK_TRAIN_OBJECT_DETECTION]
 )
 def test_download_trained_file_pathlike(tmpdir, mock_data):
-    from pathlib import Path
-
     client = SingTownAIClient(mock_data=mock_data)
     with client:
-        folder = Path(tmpdir)
-        client.download_trained_file(folder)
-        assert not folder.joinpath("best.onnx").exists()
+        client.download_trained_file(tmpdir)
+        assert not tmpdir.join("best.onnx").exists()
 
 
 @pytest.mark.parametrize("mock_data", MOCK_DATAS)
@@ -213,3 +208,126 @@ def test_subprocess_ignore_stdout(mock_data):
     with client:
         client.run_subprocess("echo Hello, World!", ignore_stdout=True)
     assert len(client.logs) == 0
+
+
+def test_export_class_folder_default(tmpdir):
+    with SingTownAIClient(mock_data=MOCK_TRAIN_CLASSIFICATION) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_class_folder(export_path)
+        assert len(export_path.join("TRAIN/cat").listdir()) == 7
+        assert len(export_path.join("TRAIN/dog").listdir()) == 7
+        assert len(export_path.join("VALID/cat").listdir()) == 2
+        assert len(export_path.join("VALID/dog").listdir()) == 2
+        assert len(export_path.join("TEST/cat").listdir()) == 1
+        assert len(export_path.join("TEST/dog").listdir()) == 1
+
+
+def test_export_class_folder_strpath(tmpdir):
+    with SingTownAIClient(mock_data=MOCK_TRAIN_CLASSIFICATION) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_class_folder(str(export_path))
+        assert len(export_path.join("TRAIN/cat").listdir()) == 7
+        assert len(export_path.join("TRAIN/dog").listdir()) == 7
+        assert len(export_path.join("VALID/cat").listdir()) == 2
+        assert len(export_path.join("VALID/dog").listdir()) == 2
+        assert len(export_path.join("TEST/cat").listdir()) == 1
+        assert len(export_path.join("TEST/dog").listdir()) == 1
+
+
+def test_export_class_folder_object_detection(tmpdir):
+    with SingTownAIClient(mock_data=MOCK_TRAIN_OBJECT_DETECTION) as client:
+        export_path = tmpdir.join("dataset")
+        with pytest.raises(RuntimeError):
+            client.export_class_folder(export_path)
+
+
+def test_export_class_folder_repeat(tmpdir):
+    mock_data = MOCK_TRAIN_CLASSIFICATION
+    mock_data["dataset"] = [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "classification": "cat",
+        },
+    ]
+
+    with SingTownAIClient(mock_data=mock_data) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_class_folder(export_path)
+        assert len(export_path.join("TRAIN/cat").listdir()) == 1
+
+
+def test_export_yolo_default(tmpdir):
+    with SingTownAIClient(mock_data=MOCK_TRAIN_OBJECT_DETECTION) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_yolo(export_path)
+        assert len(export_path.join("images").listdir()) == 20
+        assert len(export_path.join("labels").listdir()) == 20
+
+
+def test_export_yolo_classification(tmpdir):
+    with SingTownAIClient(mock_data=MOCK_TRAIN_CLASSIFICATION) as client:
+        export_path = tmpdir.join("dataset")
+        with pytest.raises(RuntimeError):
+            client.export_yolo(export_path)
+
+
+def test_export_yolo_multibox(tmpdir):
+    mock_data = MOCK_TRAIN_OBJECT_DETECTION
+    mock_data["dataset"] = [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "object_detection": [
+                {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
+                {"label": "dog", "xmin": 0.6, "ymin": 0.03, "xmax": 0.8, "ymax": 0.9},
+            ],
+        },
+    ]
+    with SingTownAIClient(mock_data=mock_data) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_yolo(export_path)
+        with open(export_path.join("labels").join("cat.0.txt")) as f:
+            lines = f.readlines()
+            assert len(lines) == 2
+            assert lines[0].strip() == "0 0.250000 0.205000 0.100000 0.390000"
+            assert lines[1].strip() == "1 0.700000 0.465000 0.200000 0.870000"
+
+
+def test_export_yolo_label_error(tmpdir):
+    mock_data = MOCK_TRAIN_OBJECT_DETECTION
+    mock_data["dataset"] = [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "object_detection": [
+                {"label": "c", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
+            ],
+        },
+    ]
+    with SingTownAIClient(mock_data=mock_data) as client:
+        export_path = tmpdir.join("dataset")
+        with pytest.raises(ValueError):
+            client.export_yolo(export_path)
+
+
+def test_export_yolo_width_height_negative(tmpdir):
+    mock_data = MOCK_TRAIN_OBJECT_DETECTION
+    mock_data["dataset"] = [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "object_detection": [
+                {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.1, "ymax": 0.4},
+            ],
+        },
+    ]
+    with SingTownAIClient(mock_data=mock_data) as client:
+        export_path = tmpdir.join("dataset")
+        with pytest.raises(ValueError):
+            client.export_yolo(export_path)

@@ -189,6 +189,52 @@ class SingTownAIClient:
                 self.log(line, end="")
             raise RuntimeError(f"subprocess {cmd} failed")
 
+    def export_class_folder(self, dataset_path: str | PathLike):
+        if self.task.project.type != "CLASSIFICATION":
+            raise RuntimeError("export_class_folder only support CLASSIFICATION task")
+        dataset = self.get_dataset()
+        for annotation in dataset:
+            folder = Path(dataset_path) / annotation.subset / annotation.classification
+            folder.mkdir(parents=True, exist_ok=True)
+            response = self.get(annotation.url)
+            response.raise_for_status()
+            with open(folder / Path(annotation.url).name, "wb") as f:
+                f.write(response.content)
+
+    def export_yolo(self, dataset_path: str | PathLike):
+        if self.task.project.type != "OBJECT_DETECTION":
+            raise RuntimeError("export_yolo only support OBJECT_DETECTION task")
+        dataset = self.get_dataset()
+        images_path = Path(dataset_path) / "images"
+        labels_path = Path(dataset_path) / "labels"
+        images_path.mkdir(parents=True, exist_ok=True)
+        labels_path.mkdir(parents=True, exist_ok=True)
+
+        for annotation in dataset:
+            response = self.get(annotation.url)
+            image_filename = images_path / Path(annotation.url).name
+            with open(image_filename, "wb") as f:
+                f.write(response.content)
+
+            label_filename = labels_path / (image_filename.stem + ".txt")
+            with open(label_filename, "w") as f:
+                for box in annotation.object_detection:
+                    cx = (box.xmin + box.xmax) / 2
+                    cy = (box.ymin + box.ymax) / 2
+                    w = box.xmax - box.xmin
+                    h = box.ymax - box.ymin
+                    if not (
+                        (0 <= cx <= 1)
+                        and (0 <= cy <= 1)
+                        and (0 <= w <= 1)
+                        and (0 <= h <= 1)
+                    ):
+                        raise ValueError(
+                            f"(cx, cy, w, h) must be between 0 and 1! cx: {cx}, cy: {cy}, w: {w}, h: {h}"
+                        )
+                    class_id = self.task.project.labels.index(box.label)
+                    f.write(f"{class_id} {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}\n")
+
     def __enter__(self):
         self.__update_status("RUNNING")
         self.__watch_log()
