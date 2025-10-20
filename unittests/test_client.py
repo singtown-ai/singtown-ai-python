@@ -75,6 +75,17 @@ def test_watch_metrics_not_exist(tmpdir, task_id):
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)
+def test_watch_metrics_pathlike(tmpdir, task_id):
+    from pathlib import Path
+
+    metricsfile = Path(tmpdir).joinpath("metrics.csv")
+    client = SingTownAIClient(metrics_file=metricsfile, task_id=task_id, mock=True)
+    with client:
+        pass
+    assert len(client.task.metrics) == 0
+
+
+@pytest.mark.parametrize("task_id", TASK_IDS)
 def test_get_dataset(tmpdir, task_id):
     with SingTownAIClient(task_id=task_id, mock=True) as client:
         dataset = client.get_dataset()
@@ -84,12 +95,32 @@ def test_get_dataset(tmpdir, task_id):
 @pytest.mark.parametrize("task_id", TASK_IDS)
 def test_upload_results_zip(tmpdir, task_id):
     uploadfile = tmpdir.join("result.zip")
-    with zipfile.ZipFile(str(uploadfile), "w") as zf:
+    with zipfile.ZipFile(uploadfile, "w") as zf:
         zf.writestr("best.tflite", "content")
 
     client = SingTownAIClient(task_id=task_id, mock=True)
     with client:
         client.upload_results_zip(str(uploadfile))
+
+
+@pytest.mark.parametrize("task_id", TASK_IDS)
+def test_upload_results_zip_not_exist(tmpdir, task_id):
+    uploadfile = tmpdir.join("result.zip")
+    client = SingTownAIClient(task_id=task_id, mock=True)
+    with client:
+        with pytest.raises(FileNotFoundError):
+            client.upload_results_zip(uploadfile)
+
+
+@pytest.mark.parametrize("task_id", TASK_IDS)
+def test_upload_results_zip_pathlike(tmpdir, task_id):
+    uploadfile = tmpdir.join("result.zip")
+    with zipfile.ZipFile(uploadfile, "w") as zf:
+        zf.writestr("best.tflite", "content")
+
+    client = SingTownAIClient(task_id=task_id, mock=True)
+    with client:
+        client.upload_results_zip(uploadfile)
 
 
 @pytest.mark.parametrize("task_id", ["2"])
@@ -106,6 +137,17 @@ def test_download_trained_file_not_exist(tmpdir, task_id):
     with client:
         client.download_trained_file(tmpdir)
         assert not tmpdir.join("best.onnx").exists()
+
+
+@pytest.mark.parametrize("task_id", ["0", "1"])
+def test_download_trained_file_pathlike(tmpdir, task_id):
+    from pathlib import Path
+
+    client = SingTownAIClient(task_id=task_id, mock=True)
+    with client:
+        folder = Path(tmpdir)
+        client.download_trained_file(folder)
+        assert not folder.joinpath("best.onnx").exists()
 
 
 @pytest.mark.parametrize("task_id", TASK_IDS)

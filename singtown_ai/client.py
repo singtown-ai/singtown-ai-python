@@ -9,8 +9,10 @@ import tempfile
 import zipfile
 import shutil
 import requests_mock
+from pathlib import Path
 from typing import List
 from io import StringIO
+from os import PathLike
 from .mock import MOCK_DATASET_MAP, MOCK_TASK_MAP
 from .type import Annotation, LogEntry, TaskResponse, TaskStatus
 
@@ -18,7 +20,7 @@ from .type import Annotation, LogEntry, TaskResponse, TaskStatus
 class SingTownAIClient:
     def __init__(
         self,
-        metrics_file: str | None = None,
+        metrics_file: str | PathLike | None = None,
         host: str | None = None,
         token: str | None = None,
         task_id: str | None = None,
@@ -29,7 +31,7 @@ class SingTownAIClient:
         self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "")
         self.task_id = task_id or os.getenv("SINGTOWN_AI_TASK_ID", "")
         self.headers = {"Authorization": f"Bearer {self.token}"}
-        self.metrics_file = metrics_file
+        self.metrics_file = Path(metrics_file) if metrics_file else None
         self.upload_interval = upload_interval
         self.logIO = StringIO()
         self.thread = None
@@ -139,13 +141,13 @@ class SingTownAIClient:
     def upload_metrics(self, metrics: List[dict]):
         self.__post_task({"metrics": metrics})
 
-    def upload_results_zip(self, file_path: str):
+    def upload_results_zip(self, file_path: str | PathLike):
         with open(file_path, "rb") as f:
             self.__request(
                 "POST", f"/api/v1/task/tasks/{self.task_id}/result", files={"file": f}
             )
 
-    def download_trained_file(self, model_path: str):
+    def download_trained_file(self, model_path: str | PathLike):
         trained_file = self.task.trained_file
         if not trained_file:
             return
@@ -161,7 +163,7 @@ class SingTownAIClient:
         os.remove(filename)
 
     def __loop_once(self):
-        if self.metrics_file and self.metrics_file.endswith(".csv"):
+        if self.metrics_file and self.metrics_file.suffix == ".csv":
             metrics = self.__read_csv(self.metrics_file)
             if metrics:
                 self.upload_metrics(metrics)
@@ -172,12 +174,12 @@ class SingTownAIClient:
         if content:
             self.__post_log(content)
 
-    def __read_csv(self, csv_path: str) -> List[dict]:
-        if os.path.exists(csv_path):
-            with open(csv_path, newline="", encoding="utf-8") as csvfile:
-                reader = csv.DictReader(csvfile)
-                return list(reader)
-        return []
+    def __read_csv(self, csv_path: Path) -> List[dict]:
+        if not csv_path.exists():
+            return []
+        with open(csv_path, newline="", encoding="utf-8") as csvfile:
+            reader = csv.DictReader(csvfile)
+            return list(reader)
 
     def log(self, message: str, end: str = "\n"):
         self.logIO.write(message + end)
