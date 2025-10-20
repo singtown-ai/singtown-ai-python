@@ -4,6 +4,17 @@ import argparse
 import tempfile
 import zipfile
 from .client import SingTownAIClient
+from .mock import (
+    MOCK_TRAIN_CLASSIFICATION,
+    MOCK_TRAIN_OBJECT_DETECTION,
+    MOCK_DEPLOY_CLASSIFICATION,
+)
+
+MOCK_MAP = {
+    "MOCK_TRAIN_CLASSIFICATION": MOCK_TRAIN_CLASSIFICATION,
+    "MOCK_TRAIN_OBJECT_DETECTION": MOCK_TRAIN_OBJECT_DETECTION,
+    "MOCK_DEPLOY_CLASSIFICATION": MOCK_DEPLOY_CLASSIFICATION,
+}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -12,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("--task_id", type=str, required=True)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--train_interval", type=float, default=3.0)
-    parser.add_argument("--mock", type=bool, default=False)
+    parser.add_argument("--mock_data", type=str, default=None)
     args = parser.parse_args()
 
     upload_fd, uploadfile_path = tempfile.mkstemp(suffix=".zip")
@@ -25,7 +36,7 @@ if __name__ == "__main__":
             host=args.host,
             token=args.token,
             task_id=args.task_id,
-            mock=args.mock,
+            mock_data=MOCK_MAP.get(args.mock_data),
         ) as client:
             client.download_trained_file("model_path")
             for i in range(args.epochs):

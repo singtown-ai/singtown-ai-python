@@ -37,3 +37,8 @@ class TaskResponse(BaseModel):
 class LogEntry(BaseModel):
     timestamp: float
     content: str
+
+
+class MockData(BaseModel):
+    task: TaskResponse
+    dataset: List[Annotation]

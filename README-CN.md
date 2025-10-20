@@ -58,12 +58,62 @@ with SingTownAiClient() as client:
 
 ```python
 from singtown_ai import SingTownAiClient
-
+mock_data = {
+    "task": {
+        "project": {
+            "labels": ["cat", "dog"],
+            "type": "CLASSIFICATION",
+        },
+        "type": "TRAIN",
+        "status": "PENDING",
+        "params": {
+            "model": "MobileNetV2",
+            "weight": "imagenet",
+            "alpha": 0.35,
+            "imgw": 96,
+            "imgh": 96,
+            "epochs": 1,
+            "learning_rate": 0.001,
+        },
+    },
+    "dataset": [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/cat.1.jpg",
+            "subset": "VALID",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/cat.2.jpg",
+            "subset": "TEST",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.0.jpg",
+            "subset": "TRAIN",
+            "classification": "dog",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.1.jpg",
+            "subset": "VALID",
+            "classification": "dog",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.2.jpg",
+            "subset": "TEST",
+            "classification": "dog",
+        },
+    ],
+}
 with SingTownAiClient(mock=True) as client:
     pass  # 在这里插入你的代码
 ```
 
-* 设置 mock=True, 会使用假的任务和数据集，这对于调试很有用。
+* 设置 mock_data, 会使用假的任务和数据集，这对于调试很有用。
 
 
 ### 上传指标

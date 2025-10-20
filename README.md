@@ -9,10 +9,11 @@ pip install singtown_ai
 ```
 
 ## Usage
+
 ### Login Configuration
 
-* **SingTown AI Cloud Service**: The `host` is `"https://ai.singtown.com"`.
-* **SingTown AI Standalone** (self-hosted): The `host` is something like `"http://127.0.0.1:8000"`.
+- **SingTown AI Cloud Service**: The `host` is `"https://ai.singtown.com"`.
+- **SingTown AI Standalone** (self-hosted): The `host` is something like `"http://127.0.0.1:8000"`.
 
 You can obtain the `token` and `task_id` from **Project -> Information**.
 
@@ -40,7 +41,7 @@ SingTownAiClient(
 python -m singtown_ai.dryrun --host=http://127.0.0.1:8000 --token=012345 --task_id=1
 ```
 
-* This command will simulate 10s train task.
+- This command will simulate 10s train task.
 
 ### Basic Usage
 
@@ -51,18 +52,68 @@ with SingTownAiClient() as client:
     pass  # Insert your code here
 ```
 
-* This will periodically update the running status. After finished, it will post a "training succeeded" status. If an error occurs, it will post a "training failed" status.
+- This will periodically update the running status. After finished, it will post a "training succeeded" status. If an error occurs, it will post a "training failed" status.
 
 ### Mock Usage
 
 ```python
 from singtown_ai import SingTownAiClient
-
+mock_data = {
+    "task": {
+        "project": {
+            "labels": ["cat", "dog"],
+            "type": "CLASSIFICATION",
+        },
+        "type": "TRAIN",
+        "status": "PENDING",
+        "params": {
+            "model": "MobileNetV2",
+            "weight": "imagenet",
+            "alpha": 0.35,
+            "imgw": 96,
+            "imgh": 96,
+            "epochs": 1,
+            "learning_rate": 0.001,
+        },
+    },
+    "dataset": [
+        {
+            "url": "https://ai.singtown.com/media/cat.0.jpg",
+            "subset": "TRAIN",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/cat.1.jpg",
+            "subset": "VALID",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/cat.2.jpg",
+            "subset": "TEST",
+            "classification": "cat",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.0.jpg",
+            "subset": "TRAIN",
+            "classification": "dog",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.1.jpg",
+            "subset": "VALID",
+            "classification": "dog",
+        },
+        {
+            "url": "https://ai.singtown.com/media/dog.2.jpg",
+            "subset": "TEST",
+            "classification": "dog",
+        },
+    ],
+}
 with SingTownAiClient(mock=True) as client:
     pass  # Insert your code here
 ```
 
-* Set mock=True, Will mock demo task and dataset, this is useful for debugging.
+* Set mock_data, Will mock demo task and dataset, this is useful for debugging.
 
 ### Uploading Metrics
 
@@ -75,7 +126,7 @@ with SingTownAiClient() as client:
     client.upload_metrics(metrics)
 ```
 
-* The field names in `metrics` are not restricted, and they will appear on the Metrics page in SingTown AI.
+- The field names in `metrics` are not restricted, and they will appear on the Metrics page in SingTown AI.
 
 ### Watching `metrics.csv`
 
@@ -84,7 +135,7 @@ with SingTownAiClient(metrics_file="metrics.csv") as client:
     pass  # Insert your code here
 ```
 
-* Every 3 seconds, the SDK will parse the `metrics.csv` and upload data.
+- Every 3 seconds, the SDK will parse the `metrics.csv` and upload data.
 
 ### Posting Logs
 
@@ -96,7 +147,7 @@ with SingTownAiClient() as client:
         time.sleep(0.1)
 ```
 
-* This will upload log strings, posting them every 3 seconds.
+- This will upload log strings, posting them every 3 seconds.
 
 ### Download Trained Files from Server
 
@@ -105,7 +156,7 @@ with SingTownAiClient() as client:
     client.download_trained_file("folder")
 ```
 
-* This method will download the trained file and automatically extract it into the specified folder.
+- This method will download the trained file and automatically extract it into the specified folder.
 
 ### Uploading Result Files
 
@@ -114,7 +165,7 @@ with SingTownAiClient() as client:
     client.upload_results_zip("your.zip")
 ```
 
-* This method uploads a `.zip` result file.
+- This method uploads a `.zip` result file.
 
 ### Run Subprocess Command
 
@@ -124,5 +175,5 @@ with SingTownAiClient() as client:
     client.run_subprocess("python3 train.py", ignore_stdout=True)
 ```
 
-* This method will run subprocess and log stdout and stderr.
-* If `ignore_stdout=True` , will not log stdout.
+- This method will run subprocess and log stdout and stderr.
+- If `ignore_stdout=True` , will not log stdout.

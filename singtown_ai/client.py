@@ -12,8 +12,7 @@ from pathlib import Path
 from typing import List
 from io import StringIO
 from os import PathLike
-from .mock import MOCK_DATASET_MAP, MOCK_TASK_MAP
-from .type import Annotation, LogEntry, TaskResponse, TaskStatus
+from .type import Annotation, LogEntry, TaskResponse, TaskStatus, MockData
 
 
 class SingTownAIClient:
@@ -24,11 +23,11 @@ class SingTownAIClient:
         token: str | None = None,
         task_id: str | None = None,
         upload_interval: float = 3,
-        mock: bool = False,
+        mock_data: dict = {},
     ):
         self.host = host or os.getenv("SINGTOWN_AI_HOST", "https://ai.singtown.com")
-        self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "")
-        self.task_id = task_id or os.getenv("SINGTOWN_AI_TASK_ID", "")
+        self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "0123456")
+        self.task_id = task_id or os.getenv("SINGTOWN_AI_TASK_ID", "0")
         self.headers = {"Authorization": f"Bearer {self.token}"}
         self.metrics_file = Path(metrics_file) if metrics_file else None
         self.upload_interval = upload_interval
@@ -36,45 +35,43 @@ class SingTownAIClient:
         self.thread = None
         self._request_lock = threading.RLock()
         self.logs = []
-        self.mocker = requests_mock.Mocker(real_http=not mock)
-        if mock:
+        self.mock_data = None
+        self.mocker = requests_mock.Mocker(real_http=not mock_data)
+        if mock_data:
+            self.mock_data = MockData(**mock_data)
             self.__setup_mock()
 
         self.task = self.__get_task()
 
     def __setup_mock(self):
-        for task_id in MOCK_TASK_MAP.keys():
+        self.mocker.get(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}",
+            json=self.mock_data.task.model_dump(),
+        )
+        self.mocker.post(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}",
+            json=self.mock_data.task.model_dump(),
+        )
+        self.mocker.post(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}/result",
+            json={"status": "success"},
+        )
+        self.mocker.post(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}/logs",
+            json={"status": "success"},
+        )
+        if self.mock_data.task.trained_file:
+            buffer = io.BytesIO()
+            with zipfile.ZipFile(buffer, "w") as zf:
+                zf.writestr("best.onnx", "mock model content")
             self.mocker.get(
-                f"{self.host}/api/v1/task/tasks/{task_id}",
-                json=MOCK_TASK_MAP[task_id].model_dump(),
+                self.mock_data.task.trained_file,
+                content=buffer.getvalue(),
             )
-            self.mocker.post(
-                f"{self.host}/api/v1/task/tasks/{task_id}",
-                json=MOCK_TASK_MAP[task_id].model_dump(),
-            )
-            self.mocker.post(
-                f"{self.host}/api/v1/task/tasks/{task_id}/result",
-                json={"status": "success"},
-            )
-            self.mocker.post(
-                f"{self.host}/api/v1/task/tasks/{task_id}/logs",
-                json={"status": "success"},
-            )
-            if MOCK_TASK_MAP[task_id].trained_file:
-                buffer = io.BytesIO()
-                with zipfile.ZipFile(buffer, "w") as zf:
-                    zf.writestr("best.onnx", "mock model content")
-                self.mocker.get(
-                    MOCK_TASK_MAP[task_id].trained_file,
-                    content=buffer.getvalue(),
-                )
-        for task_id in MOCK_DATASET_MAP.keys():
-            self.mocker.get(
-                f"{self.host}/api/v1/task/tasks/{task_id}/dataset",
-                json=[
-                    annotation.model_dump() for annotation in MOCK_DATASET_MAP[task_id]
-                ],
-            )
+        self.mocker.get(
+            f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset",
+            json=[annotation.model_dump() for annotation in self.mock_data.dataset],
+        )
         mock_dataset_dir = Path(__file__).parent.joinpath("dataset")
         for file in mock_dataset_dir.glob("*"):
             self.mocker.get(
