@@ -20,7 +20,7 @@ class TaskType(str, Enum):
     deploy = "DEPLOY"
 
 
-class DatasetType(str, Enum):
+class DatasetSubset(str, Enum):
     train = "train"
     val = "val"
     test = "test"
@@ -33,7 +33,7 @@ class ObjectDetectionEntry(BaseModel):
 
 class Annotation(BaseModel):
     file: str
-    type: DatasetType
+    subset: DatasetSubset
     classification: str = ""
     object_detection: List[ObjectDetectionEntry] = []
 
