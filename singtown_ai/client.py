@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List
 from io import StringIO
 from os import PathLike
-from .type import Annotation, LogEntry, TaskResponse, TaskStatus, MockData
+from .type import Annotation, LogEntry, TaskResponse, MockData
 
 
 class SingTownAIClient:
@@ -94,7 +94,7 @@ class SingTownAIClient:
         response = self.post(f"{self.host}/api/v1/task/tasks/{self.task_id}", json=json)
         response.raise_for_status()
 
-    def __update_status(self, status: TaskStatus):
+    def __update_status(self, status: str):
         self.__post_task({"status": status})
 
     def get_dataset(self) -> List[Annotation]:

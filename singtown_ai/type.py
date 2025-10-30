@@ -2,11 +2,6 @@ from pydantic import BaseModel
 from typing import List, Literal
 
 
-TaskStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"]
-ProjectType = Literal["CLASSIFICATION", "OBJECT_DETECTION"]
-DatasetSubset = Literal["TRAIN", "VALID", "TEST"]
-
-
 class BoundingBox(BaseModel):
     label: str
     xmin: float
@@ -17,20 +12,28 @@ class BoundingBox(BaseModel):
 
 class Annotation(BaseModel):
     url: str
-    subset: DatasetSubset
+    subset: Literal["TRAIN", "VALID", "TEST"]
     classification: str = ""
     object_detection: List[BoundingBox] = []
 
 
 class Project(BaseModel):
     labels: List[str]
-    type: ProjectType
+    type: Literal["CLASSIFICATION", "OBJECT_DETECTION"]
 
 
 class TaskResponse(BaseModel):
     project: Project
-    status: TaskStatus
-    params: dict
+    status: Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"] = "PENDING"
+    device: str
+    model_name: str
+    freeze_backbone: bool
+    batch_size: int
+    epochs: int
+    learning_rate: float
+    early_stopping: int
+    export_width: int
+    export_height: int
     metrics: List[dict] = []
 
 
