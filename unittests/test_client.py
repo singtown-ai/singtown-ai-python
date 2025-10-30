@@ -2,7 +2,6 @@ from singtown_ai import (
     SingTownAIClient,
     MOCK_TRAIN_CLASSIFICATION,
     MOCK_TRAIN_OBJECT_DETECTION,
-    MOCK_DEPLOY_CLASSIFICATION,
 )
 import time
 import zipfile
@@ -12,7 +11,6 @@ import requests_mock
 MOCK_DATAS = [
     MOCK_TRAIN_CLASSIFICATION,
     MOCK_TRAIN_OBJECT_DETECTION,
-    MOCK_DEPLOY_CLASSIFICATION,
 ]
 
 
@@ -124,34 +122,6 @@ def test_upload_results_zip_pathlike(tmpdir, mock_data):
     client = SingTownAIClient(mock_data=mock_data)
     with client:
         client.upload_results_zip(uploadfile)
-
-
-@pytest.mark.parametrize("mock_data", [MOCK_DEPLOY_CLASSIFICATION])
-def test_download_trained_file_exist_strpath(tmpdir, mock_data):
-    client = SingTownAIClient(mock_data=mock_data)
-    with client:
-        client.download_trained_file(str(tmpdir))
-        assert tmpdir.join("best.onnx").exists()
-
-
-@pytest.mark.parametrize(
-    "mock_data", [MOCK_TRAIN_CLASSIFICATION, MOCK_TRAIN_OBJECT_DETECTION]
-)
-def test_download_trained_file_not_exist(tmpdir, mock_data):
-    client = SingTownAIClient(mock_data=mock_data)
-    with client:
-        client.download_trained_file(tmpdir)
-        assert not tmpdir.join("best.onnx").exists()
-
-
-@pytest.mark.parametrize(
-    "mock_data", [MOCK_TRAIN_CLASSIFICATION, MOCK_TRAIN_OBJECT_DETECTION]
-)
-def test_download_trained_file_pathlike(tmpdir, mock_data):
-    client = SingTownAIClient(mock_data=mock_data)
-    with client:
-        client.download_trained_file(tmpdir)
-        assert not tmpdir.join("best.onnx").exists()
 
 
 @pytest.mark.parametrize("mock_data", MOCK_DATAS)

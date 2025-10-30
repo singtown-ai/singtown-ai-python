@@ -7,13 +7,11 @@ from .client import SingTownAIClient
 from .mock import (
     MOCK_TRAIN_CLASSIFICATION,
     MOCK_TRAIN_OBJECT_DETECTION,
-    MOCK_DEPLOY_CLASSIFICATION,
 )
 
 MOCK_MAP = {
     "MOCK_TRAIN_CLASSIFICATION": MOCK_TRAIN_CLASSIFICATION,
     "MOCK_TRAIN_OBJECT_DETECTION": MOCK_TRAIN_OBJECT_DETECTION,
-    "MOCK_DEPLOY_CLASSIFICATION": MOCK_DEPLOY_CLASSIFICATION,
 }
 
 if __name__ == "__main__":
@@ -38,7 +36,6 @@ if __name__ == "__main__":
             task_id=args.task_id,
             mock_data=MOCK_MAP.get(args.mock_data),
         ) as client:
-            client.download_trained_file("model_path")
             for i in range(args.epochs):
                 client.log(f"train epoch: {i}")
                 metrics.append({"epoch": i, "accuracy": i * 10})

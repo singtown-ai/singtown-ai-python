@@ -64,7 +64,6 @@ mock_data = {
             "labels": ["cat", "dog"],
             "type": "CLASSIFICATION",
         },
-        "type": "TRAIN",
         "status": "PENDING",
         "params": {
             "model": "MobileNetV2",
@@ -148,15 +147,6 @@ with SingTownAiClient() as client:
 ```
 
 - This will upload log strings, posting them every 3 seconds.
-
-### Download Trained Files from Server
-
-```python
-with SingTownAiClient() as client:
-    client.download_trained_file("folder")
-```
-
-- This method will download the trained file and automatically extract it into the specified folder.
 
 ### Uploading Result Files
 

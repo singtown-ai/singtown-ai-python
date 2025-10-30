@@ -4,7 +4,6 @@ from typing import List, Literal
 
 TaskStatus = Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"]
 ProjectType = Literal["CLASSIFICATION", "OBJECT_DETECTION"]
-TaskType = Literal["TRAIN", "DEPLOY"]
 DatasetSubset = Literal["TRAIN", "VALID", "TEST"]
 
 
@@ -30,10 +29,8 @@ class Project(BaseModel):
 
 class TaskResponse(BaseModel):
     project: Project
-    type: TaskType
     status: TaskStatus
     params: dict
-    trained_file: str = ""
     metrics: List[dict] = []
 
 

@@ -1,12 +1,8 @@
 import os
-import io
 import subprocess
 import threading
 import csv
 import time
-import tempfile
-import zipfile
-import shutil
 import requests_mock
 from pathlib import Path
 from typing import List
@@ -60,14 +56,6 @@ class SingTownAIClient:
             f"{self.host}/api/v1/task/tasks/{self.task_id}/logs",
             json={"status": "success"},
         )
-        if self.mock_data.task.trained_file:
-            buffer = io.BytesIO()
-            with zipfile.ZipFile(buffer, "w") as zf:
-                zf.writestr("best.onnx", "mock model content")
-            self.mocker.get(
-                self.mock_data.task.trained_file,
-                content=buffer.getvalue(),
-            )
         self.mocker.get(
             f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset",
             json=[annotation.model_dump() for annotation in self.mock_data.dataset],
@@ -132,21 +120,6 @@ class SingTownAIClient:
                 files={"file": f},
             )
             response.raise_for_status()
-
-    def download_trained_file(self, model_path: str | PathLike):
-        trained_file = self.task.trained_file
-        if not trained_file:
-            return
-        shutil.rmtree(model_path, ignore_errors=True)
-        os.makedirs(model_path)
-        response = self.get(trained_file)
-        filename = None
-        with tempfile.NamedTemporaryFile(delete=False) as f:
-            f.write(response.content)
-            filename = f.name
-        with zipfile.ZipFile(filename, "r") as zip_ref:
-            zip_ref.extractall(model_path)
-        os.remove(filename)
 
     def __loop_once(self):
         if self.metrics_file and self.metrics_file.suffix == ".csv":

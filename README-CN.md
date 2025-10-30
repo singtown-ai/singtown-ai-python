@@ -64,7 +64,6 @@ mock_data = {
             "labels": ["cat", "dog"],
             "type": "CLASSIFICATION",
         },
-        "type": "TRAIN",
         "status": "PENDING",
         "params": {
             "model": "MobileNetV2",
@@ -145,15 +144,6 @@ with SingTownAiClient() as client:
 ```
 
 * 这段代码会上传日志字符串，每 3 秒钟发布一次。
-
-### 从服务器下载已训练的文件
-
-```python
-with SingTownAiClient() as client:
-    client.download_trained_file("folder")
-```
-
-* 该方法会下载已训练的文件，并将其自动解压到指定的文件夹中。
 
 ### 上传结果文件
 

@@ -250,7 +250,6 @@ MOCK_TRAIN_CLASSIFICATION = {
             "labels": ["cat", "dog"],
             "type": "CLASSIFICATION",
         },
-        "type": "TRAIN",
         "status": "PENDING",
         "params": {
             "model": "MobileNetV2",
@@ -271,7 +270,6 @@ MOCK_TRAIN_OBJECT_DETECTION = {
             "labels": ["cat", "dog"],
             "type": "OBJECT_DETECTION",
         },
-        "type": "TRAIN",
         "status": "PENDING",
         "params": {
             "model": "MobileNetV2",
@@ -284,21 +282,4 @@ MOCK_TRAIN_OBJECT_DETECTION = {
         },
     },
     "dataset": MOCK_DATASET_OD,
-}
-
-MOCK_DEPLOY_CLASSIFICATION = {
-    "task": {
-        "project": {
-            "labels": ["cat", "dog"],
-            "type": "CLASSIFICATION",
-        },
-        "type": "DEPLOY",
-        "status": "PENDING",
-        "trained_file": "https://ai.singtown.com/media/trained_model.zip",
-        "params": {
-            "imgw": 96,
-            "imgh": 96,
-        },
-    },
-    "dataset": MOCK_DATASET_CF,
 }
