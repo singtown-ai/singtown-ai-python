@@ -141,6 +141,7 @@ class SingTownAIClient:
             return list(reader)
 
     def log(self, message: str, end: str = "\n"):
+        print(message, end=end)
         self.logIO.write(message + end)
 
     def __watch_log(self):
