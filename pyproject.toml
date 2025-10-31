@@ -12,6 +12,7 @@ dependencies = [
     "pydantic",
     "requests",
     "requests-mock",
+    "pyyaml",
 ]
 
 [project.optional-dependencies]

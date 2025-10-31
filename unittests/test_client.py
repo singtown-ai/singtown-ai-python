@@ -236,8 +236,29 @@ def test_export_yolo_default(tmpdir):
     with SingTownAIClient(mock_data=MOCK_TRAIN_OBJECT_DETECTION) as client:
         export_path = tmpdir.join("dataset")
         client.export_yolo(export_path)
-        assert len(export_path.join("images").listdir()) == 20
-        assert len(export_path.join("labels").listdir()) == 20
+        assert len(export_path.join("images/TRAIN").listdir()) == 12
+        assert len(export_path.join("images/VALID").listdir()) == 6
+        assert len(export_path.join("images/TEST").listdir()) == 2
+        assert len(export_path.join("labels/TRAIN").listdir()) == 12
+        assert len(export_path.join("labels/VALID").listdir()) == 6
+        assert len(export_path.join("labels/TEST").listdir()) == 2
+
+
+def test_export_yolo_yaml(tmpdir):
+    import yaml
+    from pathlib import Path
+
+    with SingTownAIClient(mock_data=MOCK_TRAIN_OBJECT_DETECTION) as client:
+        export_path = tmpdir.join("dataset")
+        client.export_yolo(export_path)
+        with open(export_path.join("data.yaml")) as f:
+            data = yaml.safe_load(f)
+            assert data["path"] == str(Path(export_path).absolute())
+            assert data["train"] == "images/TRAIN"
+            assert data["val"] == "images/VALID"
+            assert data["test"] == "images/TEST"
+            assert data["nc"] == len(client.task.project.labels)
+            assert data["names"] == client.task.project.labels
 
 
 def test_export_yolo_classification(tmpdir):
@@ -262,7 +283,7 @@ def test_export_yolo_multibox(tmpdir):
     with SingTownAIClient(mock_data=mock_data) as client:
         export_path = tmpdir.join("dataset")
         client.export_yolo(export_path)
-        with open(export_path.join("labels").join("cat.0.txt")) as f:
+        with open(export_path.join("labels/TRAIN").join("cat.0.txt")) as f:
             lines = f.readlines()
             assert len(lines) == 2
             assert lines[0].strip() == "0 0.250000 0.205000 0.100000 0.390000"

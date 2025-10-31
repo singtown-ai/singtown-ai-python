@@ -3,6 +3,7 @@ import subprocess
 import threading
 import csv
 import time
+import yaml
 import requests_mock
 from pathlib import Path
 from typing import List
@@ -178,19 +179,37 @@ class SingTownAIClient:
     def export_yolo(self, dataset_path: str | PathLike):
         if self.task.project.type != "OBJECT_DETECTION":
             raise RuntimeError("export_yolo only support OBJECT_DETECTION task")
+
+        dataset_path = Path(dataset_path)
+        dataset_path.mkdir(parents=True, exist_ok=True)
+
+        with open(dataset_path / "data.yaml", "w", encoding="utf-8") as f:
+            datayaml = {
+                "path": str(dataset_path.absolute()),
+                "train": "images/TRAIN",
+                "val": "images/VALID",
+                "test": "images/TEST",
+                "nc": len(self.task.project.labels),
+                "names": self.task.project.labels,
+            }
+            yaml.dump(datayaml, f, allow_unicode=True, sort_keys=False)
+
         dataset = self.get_dataset()
-        images_path = Path(dataset_path) / "images"
-        labels_path = Path(dataset_path) / "labels"
-        images_path.mkdir(parents=True, exist_ok=True)
-        labels_path.mkdir(parents=True, exist_ok=True)
 
         for annotation in dataset:
             response = self.get(annotation.url)
-            image_filename = images_path / Path(annotation.url).name
+
+            images_subset_path = dataset_path / "images" / annotation.subset
+            labels_subset_path = dataset_path / "labels" / annotation.subset
+
+            images_subset_path.mkdir(parents=True, exist_ok=True)
+            labels_subset_path.mkdir(parents=True, exist_ok=True)
+
+            image_filename = images_subset_path / Path(annotation.url).name
             with open(image_filename, "wb") as f:
                 f.write(response.content)
 
-            label_filename = labels_path / (image_filename.stem + ".txt")
+            label_filename = labels_subset_path / (image_filename.stem + ".txt")
             with open(label_filename, "w") as f:
                 for box in annotation.object_detection:
                     cx = (box.xmin + box.xmax) / 2
