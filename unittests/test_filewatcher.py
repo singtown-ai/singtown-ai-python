@@ -41,7 +41,7 @@ def test_watcher_empty(tmp_path):
         history.append(content)
 
     time.sleep(0.2)
-    assert history == [""]
+    assert history == []
 
 
 def test_watcher_not_exists():

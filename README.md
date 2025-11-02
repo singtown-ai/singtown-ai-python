@@ -137,8 +137,6 @@ def file_on_change(content: str):
     import csv
     from io import StringIO
 
-    if not content:
-        return
     metrics = list(csv.DictReader(StringIO(content)))
     if not metrics:
         return

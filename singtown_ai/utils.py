@@ -27,6 +27,8 @@ class file_watcher:
                 return
             with open(self.file_path, "r", encoding="utf-8") as file:
                 content = file.read()
+                if not content:
+                    return
                 if self.last_content == content:
                     return
                 self.last_content = content
