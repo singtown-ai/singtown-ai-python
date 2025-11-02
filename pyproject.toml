@@ -7,20 +7,12 @@ name = "singtown_ai"
 version = "1.5.0"
 description = "SingTown AI Python Client"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "pydantic",
     "requests",
     "requests-mock",
     "pyyaml",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "ruff",
-    "build",
 ]
 
 [tool.setuptools]
@@ -43,4 +35,11 @@ addopts = [
     "--cov=singtown_ai",
     "--cov-report=term-missing",
     "--cov-report=html",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.3",
 ]
