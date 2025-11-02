@@ -28,36 +28,36 @@ export SINGTOWN_AI_TASK_ID="your id"             # Your task ID
 #### Alternatively, set them directly in code:
 
 ```python
-SingTownAiClient(
+from singtown_ai import SingTownAiClient
+client = SingTownAiClient(
   host="https://ai.singtown.com",  # Or the cloud service URL
   token="your token",            # Your token
   task_id="your id"              # Your task ID
 )
 ```
 
-### Dry Run
-
-```bash
-python -m singtown_ai.dryrun --host=http://127.0.0.1:8000 --token=012345 --task_id=1
-```
-
-- This command will simulate 10s train task.
-
 ### Basic Usage
 
 ```python
+import time
 from singtown_ai import SingTownAiClient
+client = SingTownAiClient()
+print(client.task)
+client.export_class_folder(export_path) # or client.export_yolo(export_path)
 
-with SingTownAiClient() as client:
-    pass  # Insert your code here
+metrics = []
+for i in range(10):
+    print("Train:", i)
+    metrics.append({"epoch": i, "accuracy": i * 10})
+    client.update_metrics(metrics)
+    time.sleep(1)
+
+client.upload_results_zip(uploadfile)
 ```
-
-- This will periodically update the running status. After finished, it will post a "training succeeded" status. If an error occurs, it will post a "training failed" status.
 
 ### Mock Usage
 
 ```python
-from singtown_ai import SingTownAiClient
 mock_data = {
     "task": {
         "project": {
@@ -107,21 +107,20 @@ mock_data = {
         },
     ],
 }
-with SingTownAiClient(mock=True) as client:
-    pass  # Insert your code here
+client = SingTownAiClient(mock_data=mock_data)
 ```
 
-* Set mock_data, Will mock demo task and dataset, this is useful for debugging.
+- Set mock_data, Will mock demo task and dataset, this is useful for debugging.
 
-### Uploading Metrics
+### Update Metrics
 
 ```python
 metrics = [
     {"epoch": 0, "accuracy": 0.8, "loss": 0.2},
     {"epoch": 1, "accuracy": 0.9, "loss": 0.1},
 ]
-with SingTownAiClient() as client:
-    client.upload_metrics(metrics)
+client = SingTownAiClient()
+client.update_metrics(metrics)
 ```
 
 - The field names in `metrics` are not restricted, and they will appear on the Metrics page in SingTown AI.
@@ -129,40 +128,51 @@ with SingTownAiClient() as client:
 ### Watching `metrics.csv`
 
 ```python
-with SingTownAiClient(metrics_file="metrics.csv") as client:
-    pass  # Insert your code here
+from singtown_ai import SingTownAIClient, file_watcher
+
+client = SingTownAiClient()
+
+@file_watcher("path/to/metrics.csv", interval=3)
+def file_on_change(content: str):
+    import csv
+    from io import StringIO
+
+    if not content:
+        return
+    metrics = list(csv.DictReader(StringIO(content)))
+    if not metrics:
+        return
+    client.update_metrics(metrics)
 ```
 
-- Every 3 seconds, the SDK will parse the `metrics.csv` and upload data.
+- Every 1 seconds, the SDK will parse the `metrics.csv` and upload metrics.
 
-### Posting Logs
+### Logging
 
 ```python
-with SingTownAiClient() as client:
-    import time
-    for i in range(100):
-        client.log(f"epoch: {i}")
-        time.sleep(0.1)
+client = SingTownAiClient()
+client.log("line")
 ```
 
-- This will upload log strings, posting them every 3 seconds.
+### Logging sys.stdout and stderror
+
+```python
+from singtown_ai import SingTownAiClient, stdout_watcher
+
+client = SingTownAiClient()
+
+@stdout_watcher(interval=1)
+def on_stdout_write(content: str):
+    client.log(content, end="")
+```
+
+- Every 1 seconds, the SDK will upload messages to logging.
 
 ### Uploading Result Files
 
 ```python
-with SingTownAiClient() as client:
-    client.upload_results_zip("your.zip")
+client = SingTownAiClient()
+client.upload_results_zip("your.zip")
 ```
 
 - This method uploads a `.zip` result file.
-
-### Run Subprocess Command
-
-```python
-with SingTownAiClient() as client:
-    client.run_subprocess("echo hello world!")
-    client.run_subprocess("python3 train.py", ignore_stdout=True)
-```
-
-- This method will run subprocess and log stdout and stderr.
-- If `ignore_stdout=True` , will not log stdout.

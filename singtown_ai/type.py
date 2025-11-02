@@ -22,9 +22,13 @@ class Project(BaseModel):
     type: Literal["CLASSIFICATION", "OBJECT_DETECTION"]
 
 
+class LogEntry(BaseModel):
+    timestamp: float
+    content: str
+
+
 class TaskResponse(BaseModel):
     project: Project
-    status: Literal["PENDING", "RUNNING", "SUCCESS", "FAILED"] = "PENDING"
     device: str
     model_name: str
     freeze_backbone: bool
@@ -35,11 +39,7 @@ class TaskResponse(BaseModel):
     export_width: int
     export_height: int
     metrics: List[dict] = []
-
-
-class LogEntry(BaseModel):
-    timestamp: float
-    content: str
+    logs: List[LogEntry] = []
 
 
 class MockData(BaseModel):

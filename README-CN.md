@@ -12,8 +12,8 @@ pip install singtown_ai
 
 ### 登录配置
 
-* **SingTown AI 云服务**: `host` 为 `"https://ai.singtown.com"`。
-* **SingTown AI 独立部署**（自托管）: `host` 通常是类似 `"http://127.0.0.1:8000"` 的地址。
+- **SingTown AI 云服务**: `host` 为 `"https://ai.singtown.com"`。
+- **SingTown AI 独立部署**（自托管）: `host` 通常是类似 `"http://127.0.0.1:8000"` 的地址。
 
 你可以从 **项目 -> 信息** 获取 `token` 和 `task_id`。
 
@@ -28,36 +28,36 @@ export SINGTOWN_AI_TASK_ID="你的 id"             # 你的任务 ID
 #### 或者直接在代码中设置：
 
 ```python
-SingTownAiClient(
+from singtown_ai import SingTownAiClient
+client = SingTownAiClient(
   host="https://ai.singtown.com",  # 或者云服务的 URL
   token="你的 token",            # 你的 token
   task_id="你的 id"              # 你的任务 ID
 )
 ```
 
-### 模拟运行
-
-```bash
-python -m singtown_ai.dryrun --host=https://ai.singtown.com --token=012345 --task_id=1
-```
-
-* 这个命令会模拟一个10s的训练任务
-
 ### 基本用法
 
 ```python
+import time
 from singtown_ai import SingTownAiClient
+client = SingTownAiClient()
+print(client.task)
+client.export_class_folder(export_path) # or client.export_yolo(export_path)
 
-with SingTownAiClient() as client:
-    pass  # 在这里插入你的代码
+metrics = []
+for i in range(10):
+    print("Train:", i)
+    metrics.append({"epoch": i, "accuracy": i * 10})
+    client.update_metrics(metrics)
+    time.sleep(1)
+
+client.upload_results_zip(uploadfile)
 ```
-
-* 这个代码会定期更新运行状态。完成后，它会发布 "训练成功" 状态。如果出现错误，它会发布 "训练失败" 状态。
 
 ### Mock
 
 ```python
-from singtown_ai import SingTownAiClient
 mock_data = {
     "task": {
         "project": {
@@ -107,59 +107,72 @@ mock_data = {
         },
     ],
 }
-with SingTownAiClient(mock=True) as client:
-    pass  # 在这里插入你的代码
+client = SingTownAiClient(mock_data=mock_data)
 ```
 
-* 设置 mock_data, 会使用假的任务和数据集，这对于调试很有用。
+- 设置 mock_data, 会使用假的任务和数据集，这对于调试很有用。
 
-
-### 上传指标
+### 更新指标
 
 ```python
-with SingTownAiClient() as client:
-    client.upload_metrics(metrics)
+metrics = [
+    {"epoch": 0, "accuracy": 0.8, "loss": 0.2},
+    {"epoch": 1, "accuracy": 0.9, "loss": 0.1},
+]
+client = SingTownAiClient()
+client.update_metrics(metrics)
 ```
 
-* `metrics.csv` 中的字段名称没有限制，字段会显示在 SingTown AI 的 Metrics 页面中。
+- `metrics.csv` 中的字段名称没有限制，字段会显示在 SingTown AI 的 Metrics 页面中。
 
 ### 监控 `metrics.csv`
 
 ```python
-with SingTownAiClient(metrics_file="metrics.csv") as client:
-    pass  # 在这里插入你的代码
+from singtown_ai import SingTownAIClient, file_watcher
+
+client = SingTownAiClient()
+
+@file_watcher("path/to/metrics.csv", interval=3)
+def file_on_change(content: str):
+    import csv
+    from io import StringIO
+
+    if not content:
+        return
+    metrics = list(csv.DictReader(StringIO(content)))
+    if not metrics:
+        return
+    client.update_metrics(metrics)
 ```
 
-* SDK 每 3 秒钟解析 `metrics.csv` ，并上传指标。
+- SDK 每 1 秒钟解析 `metrics.csv` ，并上传指标。
 
-### 发布日志
+### 日志
 
 ```python
-with SingTownAiClient() as client:
-    import time
-    for i in range(100):
-        client.log(f"epoch: {i}")
-        time.sleep(0.1)
+client = SingTownAiClient()
+client.log("line")
 ```
 
-* 这段代码会上传日志字符串，每 3 秒钟发布一次。
+### 记录 sys.stdout 和 sys.stderror
+
+```python
+from singtown_ai import SingTownAiClient, stdout_watcher
+
+client = SingTownAiClient()
+
+@stdout_watcher(interval=1)
+def on_stdout_write(content: str):
+    client.log(content, end="")
+```
+
+- SDK 每 1 秒钟上传一次 stdout 和 stderr 到日志。
 
 ### 上传结果文件
 
 ```python
-with SingTownAiClient() as client:
-    client.upload_results_zip("your.zip")
+client = SingTownAiClient()
+client.upload_results_zip("your.zip")
 ```
 
-* 该方法会上传一个 `.zip` 格式的结果文件。
-
-### 运行子进程命令
-
-```python
-with SingTownAiClient() as client:
-    client.run_subprocess("echo hello world!")
-    client.run_subprocess("python3 train.py", ignore_stdout=True)
-```
-
-* 该方法会运行子进程，并记录stdout和stderr。
-* 如果 `ignore_stdout=True` ，不会记录stdout。
+- 该方法会上传一个 `.zip` 格式的结果文件。
