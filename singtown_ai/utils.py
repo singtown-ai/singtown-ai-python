@@ -65,12 +65,14 @@ class stdout_watcher:
         with self.lock:
             out = self.stdout.getvalue()
             if out:
+                self.origin_stdout.write(out)
                 self.stdout.truncate(0)
                 self.stdout.seek(0)
                 for callback in self.callbacks:
                     callback(out)
             err = self.stderr.getvalue()
             if err:
+                self.origin_stderr.write(err)
                 self.stderr.truncate(0)
                 self.stderr.seek(0)
                 for callback in self.callbacks:
