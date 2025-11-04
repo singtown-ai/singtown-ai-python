@@ -1101,7 +1101,7 @@ wheels = [
 
 [[package]]
 name = "singtown-ai"
-version = "1.6.2"
+version = "1.7.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
@@ -1121,8 +1121,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.13.2" },
-    { name = "fsspec", specifier = ">=2025.10.0" },
+    { name = "aiohttp" },
+    { name = "fsspec" },
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "requests" },
