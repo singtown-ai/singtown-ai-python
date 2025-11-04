@@ -1,4 +1,11 @@
 from .client import SingTownAIClient
-from .utils import file_watcher, stdout_watcher
+from .watcher import file_watcher, stdout_watcher
+from .exporter import export_class_folder, export_yolo
 
-__all__ = ["file_watcher", "stdout_watcher", "SingTownAIClient"]
+__all__ = [
+    "SingTownAIClient",
+    "file_watcher",
+    "stdout_watcher",
+    "export_class_folder",
+    "export_yolo",
+]
