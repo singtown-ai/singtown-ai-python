@@ -8,8 +8,8 @@ import yaml
 
 def test_export_yolo_folder(tmp_path, task_od_file, dataset_od_file):
     client = SingTownAIClient(
-        mock_task_url=task_od_file,
-        mock_dataset_url=dataset_od_file,
+        mock_task_path=task_od_file,
+        mock_dataset_path=dataset_od_file,
     )
     export_path = tmp_path / "dataset"
     export_yolo(client, export_path)
@@ -25,8 +25,8 @@ def test_export_yolo_yaml(tmp_path, task_od_file, dataset_od_file):
     from pathlib import Path
 
     client = SingTownAIClient(
-        mock_task_url=task_od_file,
-        mock_dataset_url=dataset_od_file,
+        mock_task_path=task_od_file,
+        mock_dataset_path=dataset_od_file,
     )
     export_path = tmp_path / "dataset"
     export_yolo(client, export_path)
@@ -42,8 +42,8 @@ def test_export_yolo_yaml(tmp_path, task_od_file, dataset_od_file):
 
 def test_export_yolo_typeerror(tmp_path, task_cf_file, dataset_od_file):
     client = SingTownAIClient(
-        mock_task_url=task_cf_file,
-        mock_dataset_url=dataset_od_file,
+        mock_task_path=task_cf_file,
+        mock_dataset_path=dataset_od_file,
     )
     export_path = tmp_path / "dataset"
     with pytest.raises(RuntimeError):
@@ -66,8 +66,8 @@ def test_export_yolo_multibox(tmp_path, task_od_file):
     create_image_files(dataset)
 
     client = SingTownAIClient(
-        mock_task_url=task_od_file,
-        mock_dataset_url=p,
+        mock_task_path=task_od_file,
+        mock_dataset_path=p,
     )
     export_path = tmp_path / "dataset"
     export_yolo(client, export_path)
@@ -93,8 +93,8 @@ def test_export_yolo_label_error(tmp_path, task_od_file):
     create_image_files(dataset)
 
     client = SingTownAIClient(
-        mock_task_url=task_od_file,
-        mock_dataset_url=p,
+        mock_task_path=task_od_file,
+        mock_dataset_path=p,
     )
     export_path = tmp_path / "dataset"
     with pytest.raises(ValueError):
@@ -116,8 +116,8 @@ def test_export_yolo_width_height_negative(tmp_path, task_od_file):
     create_image_files(dataset)
 
     client = SingTownAIClient(
-        mock_task_url=task_od_file,
-        mock_dataset_url=p,
+        mock_task_path=task_od_file,
+        mock_dataset_path=p,
     )
     export_path = tmp_path / "dataset"
     with pytest.raises(ValueError):

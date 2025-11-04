@@ -21,7 +21,7 @@ def test_update_metrics(request, task_fixture):
     metrics = []
     for i in range(5):
         metrics.append({"epoch": i, "accuracy": 0.8, "loss": 0.2})
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     client.update_metrics(metrics)
     assert len(client.task.metrics) == 5
 
@@ -30,7 +30,7 @@ def test_update_metrics(request, task_fixture):
 def test_update_metrics_empty(request, task_fixture):
     task_file = request.getfixturevalue(task_fixture)
     metrics = []
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     client.update_metrics(metrics)
     assert len(client.task.metrics) == 0
 
@@ -44,7 +44,7 @@ def test_watch_metrics(tmp_path, request, task_fixture):
         for i in range(5):
             f.write(f"{i},0.8,0.2\n")
 
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
 
     @file_watcher(metricsfile, interval=0.1)
     def file_on_change(content: str):
@@ -67,7 +67,7 @@ def test_upload_results_zip_strpath(tmp_path, request, task_fixture):
     with zipfile.ZipFile(uploadfile, "w") as zf:
         zf.writestr("best.tflite", "content")
 
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     client.upload_results_zip(str(uploadfile))
 
 
@@ -75,7 +75,7 @@ def test_upload_results_zip_strpath(tmp_path, request, task_fixture):
 def test_upload_results_zip_not_exist(tmp_path, request, task_fixture):
     task_file = request.getfixturevalue(task_fixture)
     uploadfile = tmp_path / "result.zip"
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     with pytest.raises(FileNotFoundError):
         client.upload_results_zip(uploadfile)
 
@@ -87,14 +87,14 @@ def test_upload_results_zip_pathlike(tmp_path, request, task_fixture):
     with zipfile.ZipFile(uploadfile, "w") as zf:
         zf.writestr("best.tflite", "content")
 
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     client.upload_results_zip(uploadfile)
 
 
 @pytest.mark.parametrize("task_fixture", ["task_cf_file", "task_od_file"])
 def test_log(request, task_fixture):
     task_file = request.getfixturevalue(task_fixture)
-    client = SingTownAIClient(mock_task_url=task_file)
+    client = SingTownAIClient(mock_task_path=task_file)
     assert len(client.task.logs) == 0
     client.log("train started")
     assert len(client.task.logs) == 1
@@ -107,8 +107,8 @@ def test_dataset(request, task_fixture, dataset_fixture):
     task_file = request.getfixturevalue(task_fixture)
     dataset_file = request.getfixturevalue(dataset_fixture)
     client = SingTownAIClient(
-        mock_task_url=task_file,
-        mock_dataset_url=dataset_file,
+        mock_task_path=task_file,
+        mock_dataset_path=dataset_file,
     )
     assert len(client.dataset) == 20
 
@@ -117,16 +117,16 @@ def test_dataset(request, task_fixture, dataset_fixture):
 def test_dataset_none(request, task_fixture):
     task_file = request.getfixturevalue(task_fixture)
     client = SingTownAIClient(
-        mock_task_url=task_file,
-        mock_dataset_url=[],
+        mock_task_path=task_file,
+        mock_dataset_path=[],
     )
     assert len(client.dataset) == 0
 
 
 def test_download_image(tmp_path, task_cf_file, dataset_cf_file):
     client = SingTownAIClient(
-        mock_task_url=task_cf_file,
-        mock_dataset_url=dataset_cf_file,
+        mock_task_path=task_cf_file,
+        mock_dataset_path=dataset_cf_file,
     )
     annotation = client.dataset[0]
     folder = tmp_path / "images"
@@ -139,8 +139,8 @@ def test_download_image_exists(tmp_path, task_cf_file, dataset_cf_file):
     from pathlib import Path
 
     client = SingTownAIClient(
-        mock_task_url=task_cf_file,
-        mock_dataset_url=dataset_cf_file,
+        mock_task_path=task_cf_file,
+        mock_dataset_path=dataset_cf_file,
     )
     annotation = client.dataset[0]
     folder = tmp_path / "images"

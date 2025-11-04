@@ -71,7 +71,7 @@ client.update_metrics(metrics)
 ### 监控 `metrics.csv`
 
 ```python
-from singtown_ai import SingTownAIClient, file_watcher
+from singtown_ai import file_watcher
 
 client = SingTownAiClient()
 
@@ -98,7 +98,7 @@ client.log("line")
 ### 记录 sys.stdout 和 sys.stderror
 
 ```python
-from singtown_ai import SingTownAiClient, stdout_watcher
+from singtown_ai import stdout_watcher
 
 client = SingTownAiClient()
 
@@ -124,19 +124,19 @@ client.upload_results_zip("your.zip")
 
 ```json
 {
-        "project": {
-            "labels": ["cat", "dog"],
-            "type": "CLASSIFICATION",
-        },
-        "device": "openmv-cam-h7-plus",
-        "model_name": "mobilenet_v2_0.35_128",
-        "freeze_backbone": True,
-        "batch_size": 16,
-        "epochs": 1,
-        "learning_rate": 0.001,
-        "early_stopping": 3,
-        "export_width": 128,
-        "export_height": 128,
+  "project": {
+    "labels": ["cat", "dog"],
+    "type": "CLASSIFICATION"
+  },
+  "device": "openmv-cam-h7-plus",
+  "model_name": "mobilenet_v2_0.35_128",
+  "freeze_backbone": true,
+  "batch_size": 16,
+  "epochs": 1,
+  "learning_rate": 0.001,
+  "early_stopping": 3,
+  "export_width": 128,
+  "export_height": 128
 }
 ```
 
@@ -180,16 +180,16 @@ client.upload_results_zip("your.zip")
 #### 环境变量设置：
 
 ```bash
-export SINGTOWN_AI_MOCK_TASK_URL="mock_task.json"
-export SINGTOWN_AI_MOCK_DATASET_URL="mock_dataset.json"
+export SINGTOWN_AI_MOCK_TASK_PATH="mock_task.json"
+export SINGTOWN_AI_MOCK_DATASET_PATH="mock_dataset.json"
 ```
 
 #### 或者直接在代码中设置：
 
 ```python
 client = SingTownAiClient(
-    mock_task_url="mock_task.json",
-    mock_dataset_url="mock_dataset.json",
+    mock_task_path="mock_task.json",
+    mock_dataset_path="mock_dataset.json",
 )
 ```
 

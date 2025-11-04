@@ -7,7 +7,6 @@ from typing import List
 from os import PathLike
 from .type import Annotation, LogEntry, TaskResponse
 import json
-import fsspec
 
 
 class SingTownAIClient:
@@ -16,8 +15,8 @@ class SingTownAIClient:
         host: str | None = None,
         token: str | None = None,
         task_id: str | None = None,
-        mock_task_url: str | PathLike | None = None,
-        mock_dataset_url: str | PathLike | None = None,
+        mock_task_path: str | PathLike | None = None,
+        mock_dataset_path: str | PathLike | None = None,
     ):
         self.host = host or os.getenv("SINGTOWN_AI_HOST", "https://ai.singtown.com")
         self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "0123456")
@@ -25,20 +24,22 @@ class SingTownAIClient:
         self.headers = {"Authorization": f"Bearer {self.token}"}
         self._request_lock = threading.RLock()
 
-        mock_task_url = mock_task_url or os.getenv("SINGTOWN_AI_MOCK_TASK_URL")
-        mock_dataset_url = mock_dataset_url or os.getenv("SINGTOWN_AI_MOCK_DATASET_URL")
+        mock_task_path = mock_task_path or os.getenv("SINGTOWN_AI_MOCK_TASK_PATH")
+        mock_dataset_path = mock_dataset_path or os.getenv(
+            "SINGTOWN_AI_MOCK_DATASET_PATH"
+        )
 
-        self.mocker = requests_mock.Mocker(real_http=not mock_task_url)
-        if mock_task_url:
-            self.__setup_mock(mock_task_url, mock_dataset_url)
+        self.mocker = requests_mock.Mocker(real_http=not mock_task_path)
+        if mock_task_path:
+            self.__setup_mock(mock_task_path, mock_dataset_path)
         self.task = self.__get_task()
         self.dataset = self.__get_dataset()
 
-    def __setup_mock(self, mock_task_url, mock_dataset_url):
-        with fsspec.open(str(mock_task_url), "r") as f:
+    def __setup_mock(self, mock_task_path, mock_dataset_path):
+        with open(str(mock_task_path), "r") as f:
             mock_task_data = TaskResponse(**json.load(f))
         try:
-            with fsspec.open(str(mock_dataset_url), "r") as f:
+            with open(str(mock_dataset_path), "r") as f:
                 mock_dataset_data = [Annotation(**item) for item in json.load(f)]
         except FileNotFoundError:
             mock_dataset_data = []
@@ -85,6 +86,8 @@ class SingTownAIClient:
         return [Annotation(**item) for item in response.json()]
 
     def download_image(self, url: str, folder: str | PathLike) -> bytes:
+        import fsspec
+
         fs, path = fsspec.core.url_to_fs(url)
         filename = os.path.basename(path)
         filepath = Path(folder) / filename

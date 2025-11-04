@@ -5,8 +5,8 @@ import pytest
 
 def test_export_class_folder_default(tmp_path, task_cf_file, dataset_cf_file):
     client = SingTownAIClient(
-        mock_task_url=task_cf_file,
-        mock_dataset_url=dataset_cf_file,
+        mock_task_path=task_cf_file,
+        mock_dataset_path=dataset_cf_file,
     )
     export_path = tmp_path / "dataset"
     export_class_folder(client, export_path)
@@ -20,8 +20,8 @@ def test_export_class_folder_default(tmp_path, task_cf_file, dataset_cf_file):
 
 def test_export_class_folder_strpath(tmp_path, task_cf_file, dataset_cf_file):
     client = SingTownAIClient(
-        mock_task_url=task_cf_file,
-        mock_dataset_url=dataset_cf_file,
+        mock_task_path=task_cf_file,
+        mock_dataset_path=dataset_cf_file,
     )
     export_path = tmp_path / "dataset"
     export_class_folder(client, str(export_path))
@@ -34,7 +34,7 @@ def test_export_class_folder_strpath(tmp_path, task_cf_file, dataset_cf_file):
 
 
 def test_export_class_folder_typeerror(tmp_path, task_od_file):
-    client = SingTownAIClient(mock_task_url=task_od_file)
+    client = SingTownAIClient(mock_task_path=task_od_file)
     export_path = tmp_path / "dataset"
     with pytest.raises(RuntimeError):
         export_class_folder(client, export_path)
