@@ -55,63 +55,6 @@ for i in range(10):
 client.upload_results_zip(uploadfile)
 ```
 
-### Mock
-
-```python
-mock_data = {
-    "task": {
-        "project": {
-            "labels": ["cat", "dog"],
-            "type": "CLASSIFICATION",
-        },
-        "device": "openmv-cam-h7-plus",
-        "model_name": "mobilenet_v2_0.35_128",
-        "freeze_backbone": True,
-        "batch_size": 16,
-        "epochs": 1,
-        "learning_rate": 0.001,
-        "early_stopping": 3,
-        "export_width": 128,
-        "export_height": 128,
-    },
-    "dataset": [
-        {
-            "url": "https://ai.singtown.com/media/cat.0.jpg",
-            "subset": "TRAIN",
-            "classification": "cat",
-        },
-        {
-            "url": "https://ai.singtown.com/media/cat.1.jpg",
-            "subset": "VALID",
-            "classification": "cat",
-        },
-        {
-            "url": "https://ai.singtown.com/media/cat.2.jpg",
-            "subset": "TEST",
-            "classification": "cat",
-        },
-        {
-            "url": "https://ai.singtown.com/media/dog.0.jpg",
-            "subset": "TRAIN",
-            "classification": "dog",
-        },
-        {
-            "url": "https://ai.singtown.com/media/dog.1.jpg",
-            "subset": "VALID",
-            "classification": "dog",
-        },
-        {
-            "url": "https://ai.singtown.com/media/dog.2.jpg",
-            "subset": "TEST",
-            "classification": "dog",
-        },
-    ],
-}
-client = SingTownAiClient(mock_data=mock_data)
-```
-
-- 设置 mock_data, 会使用假的任务和数据集，这对于调试很有用。
-
 ### 更新指标
 
 ```python
@@ -174,3 +117,80 @@ client.upload_results_zip("your.zip")
 ```
 
 - 该方法会上传一个 `.zip` 格式的结果文件。
+
+### Mock
+
+- mock_task.json
+
+```json
+{
+        "project": {
+            "labels": ["cat", "dog"],
+            "type": "CLASSIFICATION",
+        },
+        "device": "openmv-cam-h7-plus",
+        "model_name": "mobilenet_v2_0.35_128",
+        "freeze_backbone": True,
+        "batch_size": 16,
+        "epochs": 1,
+        "learning_rate": 0.001,
+        "early_stopping": 3,
+        "export_width": 128,
+        "export_height": 128,
+}
+```
+
+- mock_dataset.json
+
+```json
+[
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/cat.0.jpg",
+    "subset": "TRAIN",
+    "classification": "cat"
+  },
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/cat.1.jpg",
+    "subset": "VALID",
+    "classification": "cat"
+  },
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/cat.2.jpg",
+    "subset": "TEST",
+    "classification": "cat"
+  },
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/dog.0.jpg",
+    "subset": "TRAIN",
+    "classification": "dog"
+  },
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/dog.1.jpg",
+    "subset": "VALID",
+    "classification": "dog"
+  },
+  {
+    "url": "https://github.com/singtown-ai/singtown-ai-datasets/raw/main/images/dog.2.jpg",
+    "subset": "TEST",
+    "classification": "dog"
+  }
+]
+```
+
+#### 环境变量设置：
+
+```bash
+export SINGTOWN_AI_MOCK_TASK_URL="mock_task.json"
+export SINGTOWN_AI_MOCK_DATASET_URL="mock_dataset.json"
+```
+
+#### 或者直接在代码中设置：
+
+```python
+client = SingTownAiClient(
+    mock_task_url="mock_task.json",
+    mock_dataset_url="mock_dataset.json",
+)
+```
+
+- 设置 mock_data, 会使用假的任务和数据集，这对于调试很有用。

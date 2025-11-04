@@ -13,6 +13,8 @@ dependencies = [
     "requests",
     "requests-mock",
     "pyyaml",
+    "fsspec",
+    "aiohttp",
 ]
 
 [tool.setuptools]

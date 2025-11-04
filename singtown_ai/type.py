@@ -40,8 +40,3 @@ class TaskResponse(BaseModel):
     export_height: int
     metrics: List[dict] = []
     logs: List[LogEntry] = []
-
-
-class MockData(BaseModel):
-    task: TaskResponse
-    dataset: List[Annotation]

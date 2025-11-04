@@ -6,7 +6,9 @@ import requests_mock
 from pathlib import Path
 from typing import List
 from os import PathLike
-from .type import Annotation, LogEntry, TaskResponse, MockData
+from .type import Annotation, LogEntry, TaskResponse
+import json
+import fsspec
 
 
 class SingTownAIClient:
@@ -15,7 +17,8 @@ class SingTownAIClient:
         host: str | None = None,
         token: str | None = None,
         task_id: str | None = None,
-        mock_data: dict = {},
+        mock_task_url: str | PathLike | None = None,
+        mock_dataset_url: str | PathLike | None = None,
     ):
         self.host = host or os.getenv("SINGTOWN_AI_HOST", "https://ai.singtown.com")
         self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "0123456")
@@ -23,34 +26,35 @@ class SingTownAIClient:
         self.headers = {"Authorization": f"Bearer {self.token}"}
         self._request_lock = threading.RLock()
 
-        self.mock_data = None
-        self.mocker = requests_mock.Mocker(real_http=not mock_data)
-        if mock_data:
-            self.mock_data = MockData(**mock_data)
-            self.__setup_mock()
-        self.task = self.__get_task()
+        mock_task_url = mock_task_url or os.getenv("SINGTOWN_AI_MOCK_TASK_URL")
+        mock_dataset_url = mock_dataset_url or os.getenv("SINGTOWN_AI_MOCK_DATASET_URL")
 
-    def __setup_mock(self):
+        self.mocker = requests_mock.Mocker(real_http=not mock_task_url)
+        if mock_task_url:
+            self.__setup_mock(mock_task_url, mock_dataset_url)
+        self.task = self.__get_task()
+        self.dataset = self.__get_dataset()
+
+    def __setup_mock(self, mock_task_url, mock_dataset_url):
+        with fsspec.open(str(mock_task_url), "r") as f:
+            mock_task_data = TaskResponse(**json.load(f))
+        try:
+            with fsspec.open(str(mock_dataset_url), "r") as f:
+                mock_dataset_data = [Annotation(**item) for item in json.load(f)]
+        except FileNotFoundError:
+            mock_dataset_data = []
+
         self.mocker.get(
             f"{self.host}/api/v1/task/tasks/{self.task_id}",
-            json=self.mock_data.task.model_dump(),
+            json=mock_task_data.model_dump(),
         )
-        self.mocker.post(
-            f"{self.host}/api/v1/task/tasks/{self.task_id}",
-            json=self.mock_data.task.model_dump(),
-        )
-        self.mocker.post(f"{self.host}/api/v1/task/tasks/{self.task_id}/result")
-        self.mocker.post(f"{self.host}/api/v1/task/tasks/{self.task_id}/logs")
         self.mocker.get(
             f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset",
-            json=[annotation.model_dump() for annotation in self.mock_data.dataset],
+            json=[annotation.model_dump() for annotation in mock_dataset_data],
         )
-        mock_dataset_dir = Path(__file__).parent.joinpath("dataset")
-        for file in mock_dataset_dir.glob("*"):
-            self.mocker.get(
-                f"https://ai.singtown.com/media/{file.name}",
-                content=file.read_bytes(),
-            )
+        self.mocker.post(f"{self.host}/api/v1/task/tasks/{self.task_id}")
+        self.mocker.post(f"{self.host}/api/v1/task/tasks/{self.task_id}/result")
+        self.mocker.post(f"{self.host}/api/v1/task/tasks/{self.task_id}/logs")
 
     def request(self, method, url, **kwargs):
         import requests
@@ -77,9 +81,22 @@ class SingTownAIClient:
         self.task = TaskResponse(**new_task)
         self.post(f"{self.host}/api/v1/task/tasks/{self.task_id}", json=json)
 
-    def get_dataset(self) -> List[Annotation]:
+    def __get_dataset(self) -> List[Annotation]:
         response = self.get(f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset")
         return [Annotation(**item) for item in response.json()]
+
+    def download_image(self, url: str, folder: str | PathLike) -> bytes:
+        fs, path = fsspec.core.url_to_fs(url)
+        filename = os.path.basename(path)
+        filepath = Path(folder) / filename
+        if filepath.exists():
+            return filepath
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with fsspec.open(url, "rb") as f:
+            content = f.read()
+        with open(filepath, "wb") as f:
+            f.write(content)
+        return filepath
 
     def log(self, content: str, end: str = "\n"):
         log = LogEntry(timestamp=time.time(), content=content + end)
@@ -102,13 +119,9 @@ class SingTownAIClient:
     def export_class_folder(self, dataset_path: str | PathLike):
         if self.task.project.type != "CLASSIFICATION":
             raise RuntimeError("export_class_folder only support CLASSIFICATION task")
-        dataset = self.get_dataset()
-        for annotation in dataset:
+        for annotation in self.dataset:
             folder = Path(dataset_path) / annotation.subset / annotation.classification
-            folder.mkdir(parents=True, exist_ok=True)
-            response = self.get(annotation.url)
-            with open(folder / Path(annotation.url).name, "wb") as f:
-                f.write(response.content)
+            self.download_image(annotation.url, folder)
 
     def export_yolo(self, dataset_path: str | PathLike):
         if self.task.project.type != "OBJECT_DETECTION":
@@ -128,22 +141,15 @@ class SingTownAIClient:
             }
             yaml.dump(datayaml, f, allow_unicode=True, sort_keys=False)
 
-        dataset = self.get_dataset()
-
-        for annotation in dataset:
-            response = self.get(annotation.url)
-
+        for annotation in self.dataset:
             images_subset_path = dataset_path / "images" / annotation.subset
-            labels_subset_path = dataset_path / "labels" / annotation.subset
-
             images_subset_path.mkdir(parents=True, exist_ok=True)
+            image_path = self.download_image(annotation.url, images_subset_path)
+
+            labels_subset_path = dataset_path / "labels" / annotation.subset
             labels_subset_path.mkdir(parents=True, exist_ok=True)
 
-            image_filename = images_subset_path / Path(annotation.url).name
-            with open(image_filename, "wb") as f:
-                f.write(response.content)
-
-            label_filename = labels_subset_path / (image_filename.stem + ".txt")
+            label_filename = labels_subset_path / (image_path.stem + ".txt")
             with open(label_filename, "w") as f:
                 for box in annotation.object_detection:
                     cx = (box.xmin + box.xmax) / 2
