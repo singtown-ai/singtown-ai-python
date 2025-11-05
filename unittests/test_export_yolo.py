@@ -55,7 +55,7 @@ def test_export_yolo_multibox(tmp_path, task_od_file):
         {
             "url": f"{tmp_path}/images/cat.0.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
                 {"label": "dog", "xmin": 0.6, "ymin": 0.03, "xmax": 0.8, "ymax": 0.9},
             ],
@@ -83,7 +83,7 @@ def test_export_yolo_label_error(tmp_path, task_od_file):
         {
             "url": f"{tmp_path}/images/cat.0.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {"label": "c", "xmin": 0.2, "ymin": 0.01, "xmax": 0.3, "ymax": 0.4},
             ],
         },
@@ -106,7 +106,7 @@ def test_export_yolo_width_height_negative(tmp_path, task_od_file):
         {
             "url": f"{tmp_path}/images/cat.0.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {"label": "cat", "xmin": 0.2, "ymin": 0.01, "xmax": 0.1, "ymax": 0.4},
             ],
         },

@@ -177,6 +177,8 @@ client.upload_results_zip("your.zip")
 ]
 ```
 
+- JSON 的键可以使用下划线命名（snake_case）或驼峰命名（camelCase）。
+
 #### 环境变量设置：
 
 ```bash

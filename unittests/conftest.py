@@ -18,14 +18,14 @@ def task_cf_file(tmp_path):
     task = {
         "project": {"labels": ["cat", "dog"], "type": "CLASSIFICATION"},
         "device": "openmv-cam-h7-plus",
-        "model_name": "mobilenet_v2_0.35_128",
-        "freeze_backbone": True,
-        "batch_size": 16,
+        "modelName": "mobilenet_v2_0.35_128",
+        "freezeBackbone": True,
+        "batchSize": 16,
         "epochs": 1,
-        "learning_rate": 0.001,
-        "early_stopping": 3,
-        "export_width": 128,
-        "export_height": 128,
+        "learningRate": 0.001,
+        "earlyStopping": 3,
+        "exportWidth": 128,
+        "exportHeight": 128,
         "metrics": [],
         "logs": [],
     }
@@ -42,14 +42,14 @@ def task_od_file(tmp_path):
     task = {
         "project": {"labels": ["cat", "dog"], "type": "OBJECT_DETECTION"},
         "device": "singtown-ai-vision-module",
-        "model_name": "yolov5s_640",
-        "freeze_backbone": True,
-        "batch_size": 16,
+        "modelName": "yolov5s_640",
+        "freezeBackbone": True,
+        "batchSize": 16,
         "epochs": 1,
-        "learning_rate": 0.001,
-        "early_stopping": 3,
-        "export_width": 640,
-        "export_height": 480,
+        "learningRate": 0.001,
+        "earlyStopping": 3,
+        "exportWidth": 640,
+        "exportHeight": 480,
         "metrics": [],
         "logs": [],
     }
@@ -181,7 +181,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.0.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.25990500000000005,
@@ -194,7 +194,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.0.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.5062115,
@@ -207,7 +207,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.1.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.15727049999999998,
@@ -220,7 +220,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.1.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.17749600000000001,
@@ -233,7 +233,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.2.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.149773,
@@ -246,7 +246,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.2.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.48969850000000004,
@@ -259,7 +259,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.3.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.029673000000000005,
@@ -272,7 +272,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.3.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.060559500000000016,
@@ -285,7 +285,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.4.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.1879345,
@@ -298,7 +298,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.4.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.12422349999999999,
@@ -311,7 +311,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.5.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.3397625,
@@ -324,7 +324,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.5.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.245341,
@@ -337,7 +337,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.6.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.15844250000000001,
@@ -350,7 +350,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.6.jpg",
             "subset": "TRAIN",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.07725850000000001,
@@ -363,7 +363,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.7.jpg",
             "subset": "VALID",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.5252225,
@@ -376,7 +376,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.7.jpg",
             "subset": "VALID",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.25310599999999994,
@@ -396,7 +396,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.8.jpg",
             "subset": "VALID",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.215133,
@@ -416,7 +416,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.8.jpg",
             "subset": "VALID",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.20126749999999993,
@@ -429,7 +429,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/cat.9.jpg",
             "subset": "TEST",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "cat",
                     "xmin": 0.145235,
@@ -442,7 +442,7 @@ def dataset_od_file(tmp_path):
         {
             "url": f"{tmp_path}/images/dog.9.jpg",
             "subset": "TEST",
-            "object_detection": [
+            "objectDetection": [
                 {
                     "label": "dog",
                     "xmin": 0.328051,

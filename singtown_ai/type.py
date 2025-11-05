@@ -1,8 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 from typing import List, Literal
 
 
-class BoundingBox(BaseModel):
+class CamelCaseModel(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+
+class BoundingBox(CamelCaseModel):
     label: str
     xmin: float
     ymin: float
@@ -10,24 +15,24 @@ class BoundingBox(BaseModel):
     ymax: float
 
 
-class Annotation(BaseModel):
+class Annotation(CamelCaseModel):
     url: str
     subset: Literal["TRAIN", "VALID", "TEST"]
     classification: str = ""
     object_detection: List[BoundingBox] = []
 
 
-class Project(BaseModel):
+class Project(CamelCaseModel):
     labels: List[str]
     type: Literal["CLASSIFICATION", "OBJECT_DETECTION"]
 
 
-class LogEntry(BaseModel):
+class LogEntry(CamelCaseModel):
     timestamp: float
     content: str
 
 
-class TaskResponse(BaseModel):
+class TaskResponse(CamelCaseModel):
     project: Project
     device: str
     model_name: str

@@ -177,6 +177,8 @@ client.upload_results_zip("your.zip")
 ]
 ```
 
+- The JSON keys may use either snake_case or camelCase.
+
 #### Environment Variables:
 
 ```bash
