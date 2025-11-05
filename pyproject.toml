@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "singtown_ai"
-version = "1.9.0"
+version = "1.9.2"
 description = "SingTown AI Python Client"
 readme = "README.md"
 requires-python = ">=3.10"
