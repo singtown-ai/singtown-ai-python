@@ -1,9 +1,10 @@
 from pathlib import Path
 from os import PathLike
 import yaml
+from typing import Union
 
 
-def export_class_folder(client, folder: str | PathLike):
+def export_class_folder(client, folder: Union[str, PathLike]):
     if client.task.project.type != "CLASSIFICATION":
         raise RuntimeError("export_class_folder only support CLASSIFICATION task")
 
@@ -12,7 +13,7 @@ def export_class_folder(client, folder: str | PathLike):
         client.download_image(annotation.url, image_folder)
 
 
-def export_yolo(client, folder: str | PathLike):
+def export_yolo(client, folder: Union[str, PathLike]):
     if client.task.project.type != "OBJECT_DETECTION":
         raise RuntimeError("export_yolo only support OBJECT_DETECTION task")
 

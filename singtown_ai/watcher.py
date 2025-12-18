@@ -4,10 +4,11 @@ from os import PathLike
 from io import StringIO
 import sys
 import atexit
+from typing import Union
 
 
 class file_watcher:
-    def __init__(self, file_path: str | PathLike, interval=1.0):
+    def __init__(self, file_path: Union[str, PathLike], interval=1.0):
         self.file_path = Path(file_path)
         self.interval = interval
         self.callbacks = []

@@ -3,7 +3,7 @@ import threading
 import time
 import requests_mock
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Union
 from os import PathLike
 from .type import Annotation, LogEntry, TaskResponse
 import json
@@ -12,11 +12,11 @@ import json
 class SingTownAIClient:
     def __init__(
         self,
-        host: str | None = None,
-        token: str | None = None,
-        task_id: str | None = None,
-        mock_task_path: str | PathLike | None = None,
-        mock_dataset_path: str | PathLike | None = None,
+        host: Optional[str] = None,
+        token: Optional[str] = None,
+        task_id: Optional[str] = None,
+        mock_task_path: Union[str, PathLike, None] = None,
+        mock_dataset_path: Union[str, PathLike, None] = None,
     ):
         self.host = host or os.getenv("SINGTOWN_AI_HOST", "https://ai.singtown.com")
         self.token = token or os.getenv("SINGTOWN_AI_TOKEN", "0123456")
@@ -85,7 +85,7 @@ class SingTownAIClient:
         response = self.get(f"{self.host}/api/v1/task/tasks/{self.task_id}/dataset")
         return [Annotation(**item) for item in response.json()]
 
-    def download_image(self, url: str, folder: str | PathLike) -> bytes:
+    def download_image(self, url: str, folder: Union[str, PathLike]) -> bytes:
         import fsspec
 
         fs, path = fsspec.core.url_to_fs(url)
@@ -111,7 +111,7 @@ class SingTownAIClient:
     def update_metrics(self, metrics: List[dict]):
         self.__post_task({"metrics": metrics})
 
-    def upload_results_zip(self, file_path: str | PathLike):
+    def upload_results_zip(self, file_path: Union[str, PathLike]):
         with open(file_path, "rb") as f:
             self.post(
                 f"{self.host}/api/v1/task/tasks/{self.task_id}/result",
