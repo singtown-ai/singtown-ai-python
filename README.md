@@ -109,6 +109,36 @@ def on_stdout_write(content: str):
 
 - Every 1 seconds, the SDK will upload messages to logging.
 
+### Reporting Task Status
+
+```python
+client = SingTownAiClient()
+
+# Report task as successful
+client.success()
+
+# Report task as failed
+client.failed()
+```
+
+### Error Watcher
+
+```python
+from singtown_ai import error_watcher
+
+client = SingTownAiClient()
+
+@error_watcher()
+def on_error(error_message: str):
+    client.log(error_message, end="")
+    client.failed()
+```
+
+- The `error_watcher` hooks into `sys.excepthook` to capture unhandled exceptions.
+- The callback receives the full traceback as a string.
+- Multiple callbacks can be registered.
+- Call `watcher.close()` to restore the original `sys.excepthook`.
+
 ### Uploading Result Files
 
 ```python

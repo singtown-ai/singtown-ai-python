@@ -111,6 +111,12 @@ class SingTownAIClient:
     def update_metrics(self, metrics: List[dict]):
         self.__post_task({"metrics": metrics})
 
+    def success(self):
+        self.__post_task({"status": "SUCCESS"})
+
+    def failed(self):
+        self.__post_task({"status": "FAILED"})
+
     def upload_results_zip(self, file_path: Union[str, PathLike]):
         with open(file_path, "rb") as f:
             self.post(

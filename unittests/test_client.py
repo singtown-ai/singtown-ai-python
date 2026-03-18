@@ -16,6 +16,24 @@ def test_server_error():
 
 
 @pytest.mark.parametrize("task_fixture", ["task_cf_file", "task_od_file"])
+def test_success(request, task_fixture):
+    task_file = request.getfixturevalue(task_fixture)
+    client = SingTownAIClient(mock_task_path=task_file)
+    original_model_name = client.task.model_name
+    client.success()
+    assert client.task.model_name == original_model_name
+
+
+@pytest.mark.parametrize("task_fixture", ["task_cf_file", "task_od_file"])
+def test_failed(request, task_fixture):
+    task_file = request.getfixturevalue(task_fixture)
+    client = SingTownAIClient(mock_task_path=task_file)
+    original_model_name = client.task.model_name
+    client.failed()
+    assert client.task.model_name == original_model_name
+
+
+@pytest.mark.parametrize("task_fixture", ["task_cf_file", "task_od_file"])
 def test_update_metrics(request, task_fixture):
     task_file = request.getfixturevalue(task_fixture)
     metrics = []

@@ -1,4 +1,5 @@
 import threading
+import traceback
 from pathlib import Path
 from os import PathLike
 from io import StringIO
@@ -41,6 +42,29 @@ class file_watcher:
         self.thread = threading.Timer(self.interval, self.start)
         self.thread.daemon = True
         self.thread.start()
+
+    def __call__(self, func):
+        self.callbacks.append(func)
+        return func
+
+
+class error_watcher:
+    def __init__(self):
+        self.callbacks = []
+        self._original_excepthook = sys.excepthook
+        sys.excepthook = self._excepthook
+
+    def _excepthook(self, exc_type, exc_value, exc_tb):
+        error_message = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        for callback in self.callbacks:
+            try:
+                callback(error_message)
+            except Exception:
+                pass
+        self._original_excepthook(exc_type, exc_value, exc_tb)
+
+    def close(self):
+        sys.excepthook = self._original_excepthook
 
     def __call__(self, func):
         self.callbacks.append(func)
